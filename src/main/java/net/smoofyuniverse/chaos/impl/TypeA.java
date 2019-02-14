@@ -34,12 +34,12 @@ public class TypeA implements ColoredType {
 	public final Color color;
 	public final double radius, friction;
 	public final double attractionFactor, attractionRadius, repulsionFactor, repulsionRadius;
-	public final boolean flatForce;
+	public final boolean flatAttraction;
 
 	private final double attractionRadius2;
 	private final Color attractionColor, repulsionColor;
 
-	public TypeA(Color color, double radius, double friction, double attractionFactor, double attractionRadius, double repulsionFactor, double repulsionRadius, boolean flatForce) {
+	public TypeA(Color color, double radius, double friction, double attractionFactor, double attractionRadius, double repulsionFactor, double repulsionRadius, boolean flatAttraction) {
 		if (color == null)
 			throw new IllegalArgumentException("color");
 		if (radius <= 0)
@@ -60,7 +60,7 @@ public class TypeA implements ColoredType {
 		this.attractionRadius = attractionRadius;
 		this.repulsionFactor = repulsionFactor;
 		this.repulsionRadius = repulsionRadius;
-		this.flatForce = flatForce;
+		this.flatAttraction = flatAttraction;
 
 		this.repulsionColor = Color.color(color.getRed(), color.getGreen(), color.getBlue(), 0.2);
 		this.attractionColor = Color.color(color.getRed(), color.getGreen(), color.getBlue(), 0.05);
@@ -119,7 +119,7 @@ public class TypeA implements ColoredType {
 
 		double f;
 		if (d > this.repulsionRadius) {
-			if (this.flatForce) {
+			if (this.flatAttraction) {
 				f = this.attractionFactor;
 			} else {
 				double numer = 2d * Math.abs(d - 0.5d * (this.attractionRadius + this.repulsionRadius));

@@ -42,6 +42,7 @@ import java.util.concurrent.Executors;
 
 public class UserInterface extends StackPane {
 	private static final Logger logger = App.getLogger("UserInterface");
+	private static final Color details_background = Color.color(0.9, 0.9, 0.9, 0.3);
 
 	private final GenerationPanel generationPanel = new GenerationPanel();
 	private final Stage stage2 = new Stage();
@@ -51,7 +52,8 @@ public class UserInterface extends StackPane {
 	private final Universe universe = new Universe(this.executor, 12);
 
 	private boolean pause = true, generate = true, details = false;
-	private long tau = 25;
+	private int forcedTicks = 0;
+	private long age, tau = 25;
 	private Particle selection;
 
 	public UserInterface() {
@@ -59,8 +61,8 @@ public class UserInterface extends StackPane {
 		this.stage2.setTitle(App.get().getTitle());
 		this.stage2.getIcons().addAll(App.get().getStage().get().getIcons());
 		this.stage2.setResizable(false);
-		this.stage2.setWidth(600);
-		this.stage2.setHeight(800);
+		this.stage2.setWidth(750);
+		this.stage2.setHeight(900);
 
 		this.canvas.widthProperty().bind(widthProperty());
 		this.canvas.heightProperty().bind(heightProperty());
@@ -132,6 +134,36 @@ public class UserInterface extends StackPane {
 				if (this.tau > 1)
 					this.tau--;
 				break;
+			case NUMPAD0:
+				this.forcedTicks = 0;
+				break;
+			case NUMPAD1:
+				this.forcedTicks += 1;
+				break;
+			case NUMPAD2:
+				this.forcedTicks += 2;
+				break;
+			case NUMPAD3:
+				this.forcedTicks += 3;
+				break;
+			case NUMPAD4:
+				this.forcedTicks += 4;
+				break;
+			case NUMPAD5:
+				this.forcedTicks += 5;
+				break;
+			case NUMPAD6:
+				this.forcedTicks += 6;
+				break;
+			case NUMPAD7:
+				this.forcedTicks += 7;
+				break;
+			case NUMPAD8:
+				this.forcedTicks += 8;
+				break;
+			case NUMPAD9:
+				this.forcedTicks += 9;
+				break;
 		}
 	}
 
@@ -139,16 +171,22 @@ public class UserInterface extends StackPane {
 		while (App.get().getState() != State.SHUTDOWN) {
 			long t = System.currentTimeMillis();
 
-			if (this.generate)
+			if (this.generate) {
 				this.universe.particles.clear();
+				this.age = 0;
+			}
 
-			if (!this.pause) {
+			if (!this.pause || this.forcedTicks != 0) {
+				if (this.forcedTicks != 0)
+					this.forcedTicks--;
+
 				if (this.generate) {
 					this.generationPanel.generateParticles(this.universe);
 					this.generate = false;
 				}
 
 				this.universe.tick();
+				this.age++;
 			}
 
 			Snapshot snapshot = this.universe.snapshot();
@@ -161,10 +199,13 @@ public class UserInterface extends StackPane {
 				snapshot.render(g);
 
 				if (this.details) {
+					g.setFill(details_background);
+					g.fillRect(5, 5, 100, 68);
 					g.setFill(Color.WHITE);
-					g.fillText("Render: " + f(System.currentTimeMillis() - t2) + " ms", 10, 20);
-					g.fillText("Tick: " + f(dt) + " / " + f(this.tau) + " ms", 10, 35);
-					g.fillText("Particles: " + snapshot.particles.length, 10, 50);
+					g.fillText("Particles: " + snapshot.particles.length, 10, 20);
+					g.fillText("Render: " + f(System.currentTimeMillis() - t2) + " ms", 10, 35);
+					g.fillText("Tick: " + f(dt) + " / " + f(this.tau) + " ms", 10, 50);
+					g.fillText("Age: " + this.age, 10, 65);
 				}
 			});
 

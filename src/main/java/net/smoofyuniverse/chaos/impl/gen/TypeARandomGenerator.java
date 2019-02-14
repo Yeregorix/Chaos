@@ -33,9 +33,9 @@ public final class TypeARandomGenerator implements TypeAGenerator {
 			repulsionRadiusMin, repulsionRadiusMax,
 			attractionRadiusMin, attractionRadiusMax,
 			friction;
-	public final boolean flatForce;
+	public final boolean flatAttraction;
 
-	public TypeARandomGenerator(String name, int recommendedTypes, double attractionMean, double attractionStd, double repulsionRadiusMin, double repulsionRadiusMax, double attractionRadiusMin, double attractionRadiusMax, double friction, boolean flatForce) {
+	public TypeARandomGenerator(String name, int recommendedTypes, double attractionMean, double attractionStd, double repulsionRadiusMin, double repulsionRadiusMax, double attractionRadiusMin, double attractionRadiusMax, double friction, boolean flatAttraction) {
 		this.name = name;
 		this.recommendedTypes = recommendedTypes;
 		this.attractionMean = attractionMean;
@@ -45,7 +45,7 @@ public final class TypeARandomGenerator implements TypeAGenerator {
 		this.attractionRadiusMin = attractionRadiusMin;
 		this.attractionRadiusMax = attractionRadiusMax;
 		this.friction = friction;
-		this.flatForce = flatForce;
+		this.flatAttraction = flatAttraction;
 	}
 
 	@Override
@@ -70,7 +70,7 @@ public final class TypeARandomGenerator implements TypeAGenerator {
 		b.attractionRadius.setValue(attractionRadius);
 		b.repulsionFactor.setValue(2);
 		b.repulsionRadius.setValue(repulsionRadius);
-		b.flatForce.setSelected(this.flatForce);
+		b.flatAttraction.setSelected(this.flatAttraction);
 		return b;
 	}
 }

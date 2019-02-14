@@ -38,9 +38,9 @@ import java.util.Optional;
 public class TypeABuilder implements ColoredTypeBuilder<TypeA> {
 	public final ObjectProperty<Color> color = new SimpleObjectProperty<>();
 	public final DoubleField radius = new DoubleField(0, 100, 5), friction = new DoubleField(0, 1, 0.1),
-			attractionFactor = new DoubleField(0, 50, 1), attractionRadius = new DoubleField(0, 500, 10),
+			attractionFactor = new DoubleField(0, 50, 0.1), attractionRadius = new DoubleField(0, 500, 10),
 			repulsionFactor = new DoubleField(0, 50, 1), repulsionRadius = new DoubleField(0, 500, 7);
-	public final CheckBox flatForce = new CheckBox();
+	public final CheckBox flatAttraction = new CheckBox();
 
 	private GridPane pane = new GridPane();
 
@@ -62,18 +62,18 @@ public class TypeABuilder implements ColoredTypeBuilder<TypeA> {
 		this.pane.add(new Label("Friction:"), 2, 0);
 		this.pane.add(this.friction, 3, 0);
 
-		this.pane.add(new Label("Attract_F:"), 0, 1);
+		this.pane.add(new Label("Attraction factor:"), 0, 1);
 		this.pane.add(this.attractionFactor, 1, 1);
-		this.pane.add(new Label("Attract_R:"), 2, 1);
+		this.pane.add(new Label("Attraction radius:"), 2, 1);
 		this.pane.add(this.attractionRadius, 3, 1);
 
-		this.pane.add(new Label("Repuls_F:"), 0, 2);
+		this.pane.add(new Label("Repulsion factor:"), 0, 2);
 		this.pane.add(this.repulsionFactor, 1, 2);
-		this.pane.add(new Label("Repuls_R:"), 2, 2);
+		this.pane.add(new Label("Repulsion radius:"), 2, 2);
 		this.pane.add(this.repulsionRadius, 3, 2);
 
-		this.pane.add(new Label("Flat_force:"), 0, 3);
-		this.pane.add(this.flatForce, 1, 3);
+		this.pane.add(new Label("Flat attraction:"), 0, 3);
+		this.pane.add(this.flatAttraction, 1, 3);
 
 		this.pane.setHgap(3);
 		this.pane.setVgap(3);
@@ -90,7 +90,7 @@ public class TypeABuilder implements ColoredTypeBuilder<TypeA> {
 		this.attractionRadius.setValue(value.attractionRadius);
 		this.repulsionFactor.setValue(value.repulsionFactor);
 		this.repulsionRadius.setValue(value.repulsionRadius);
-		this.flatForce.setSelected(value.flatForce);
+		this.flatAttraction.setSelected(value.flatAttraction);
 	}
 
 	@Override
@@ -100,7 +100,7 @@ public class TypeABuilder implements ColoredTypeBuilder<TypeA> {
 					this.radius.getValue(), this.friction.getValue(),
 					this.attractionFactor.getValue(), this.attractionRadius.getValue(),
 					this.repulsionFactor.getValue(), this.repulsionRadius.getValue(),
-					this.flatForce.isSelected()));
+					this.flatAttraction.isSelected()));
 		} catch (Exception e) {
 			return Optional.empty();
 		}
