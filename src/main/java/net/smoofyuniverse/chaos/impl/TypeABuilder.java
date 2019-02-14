@@ -38,8 +38,8 @@ import java.util.Optional;
 public class TypeABuilder implements ColoredTypeBuilder<TypeA> {
 	public final ObjectProperty<Color> color = new SimpleObjectProperty<>();
 	public final DoubleField radius = new DoubleField(0, 100, 5), friction = new DoubleField(0, 1, 0.1),
-			attractionFactor = new DoubleField(0, 50, 0.1), attractionRadius = new DoubleField(0, 500, 10),
-			repulsionFactor = new DoubleField(0, 50, 1), repulsionRadius = new DoubleField(0, 500, 7);
+			attractionFactor = new DoubleField(-50, 50, 0.1), attractionRadius = new DoubleField(0, 500, 10),
+			repulsionFactor = new DoubleField(-50, 50, 1), repulsionRadius = new DoubleField(0, 500, 7);
 	public final CheckBox flatAttraction = new CheckBox();
 
 	private GridPane pane = new GridPane();
