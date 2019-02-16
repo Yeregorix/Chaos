@@ -44,11 +44,13 @@ import net.smoofyuniverse.common.fxui.field.IntegerField;
 import net.smoofyuniverse.common.util.GridUtil;
 
 import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class GenerationPanel extends GridPane {
 	private final ListView<TypeObject> types = new ListView<>();
 
-	private final Random random = new Random();
+	private final Random optionsRandom = new Random();
+	private long genSeed;
 	private int ct;
 
 	public GenerationPanel() {
@@ -58,11 +60,19 @@ public class GenerationPanel extends GridPane {
 		ChoiceBox<TypeGenerator<?>> generator = new ChoiceBox<>();
 		Button addOne = new Button("Add one"), addMany = new Button("Add many");
 
+		TextField seed1 = new TextField(), seed2 = new TextField();
+		Button rSeed1 = new Button("Random"), rSeed2 = new Button("Random");
+
 		assignColors.setMaxWidth(Double.MAX_VALUE);
 		clear.setMaxWidth(Double.MAX_VALUE);
 		generator.setMaxWidth(Double.MAX_VALUE);
 		addOne.setMaxWidth(Double.MAX_VALUE);
 		addMany.setMaxWidth(Double.MAX_VALUE);
+
+		seed1.setMaxWidth(Double.MAX_VALUE);
+		seed2.setMaxWidth(Double.MAX_VALUE);
+		rSeed1.setMaxWidth(Double.MAX_VALUE);
+		rSeed2.setMaxWidth(Double.MAX_VALUE);
 
 		this.types.setCellFactory(c -> new TypeCell());
 		assignColors.setOnAction(e -> assignColors());
@@ -89,9 +99,9 @@ public class GenerationPanel extends GridPane {
 			if (gen == null)
 				return;
 
-			TypeBuilder<?> b = gen.generate(this.random);
+			TypeBuilder<?> b = gen.generate(this.optionsRandom);
 			if (b instanceof ColoredTypeBuilder)
-				((ColoredTypeBuilder) b).colorProperty().set(Color.hsb(this.random.nextDouble() * 360, 1d, this.ct++ % 2 == 0 ? 1d : 0.6d));
+				((ColoredTypeBuilder) b).colorProperty().set(Color.hsb(this.optionsRandom.nextDouble() * 360, 1d, this.ct++ % 2 == 0 ? 1d : 0.6d));
 			this.types.getItems().add(new TypeObject(b));
 		});
 
@@ -103,41 +113,76 @@ public class GenerationPanel extends GridPane {
 			int c = gen.recommendedTypes();
 			int d = (200 / c) * 10;
 			for (int i = 0; i < c; i++) {
-				TypeBuilder<?> b = gen.generate(this.random);
+				TypeBuilder<?> b = gen.generate(this.optionsRandom);
 				if (b instanceof ColoredTypeBuilder)
-					((ColoredTypeBuilder) b).colorProperty().set(Color.hsb(this.random.nextDouble() * 360, 1d, this.ct++ % 2 == 0 ? 1d : 0.6d));
+					((ColoredTypeBuilder) b).colorProperty().set(Color.hsb(this.optionsRandom.nextDouble() * 360, 1d, this.ct++ % 2 == 0 ? 1d : 0.6d));
 				TypeObject obj = new TypeObject(b);
 				obj.count.setValue(d);
 				this.types.getItems().add(obj);
 			}
 		});
 
-		add(this.types, 0, 0, 3, 1);
+		seed1.textProperty().addListener((v, oldV, newV) -> {
+			long l;
+			try {
+				l = Long.parseLong(newV);
+			} catch (NumberFormatException e) {
+				l = newV.hashCode();
+			}
+			this.genSeed = l;
+		});
+
+		seed2.textProperty().addListener((v, oldV, newV) -> {
+			long l;
+			try {
+				l = Long.parseLong(newV);
+			} catch (NumberFormatException e) {
+				l = newV.hashCode();
+			}
+			this.optionsRandom.setSeed(l);
+		});
+
+		rSeed1.setOnAction(e -> seed1.setText(randomSeed()));
+		rSeed2.setOnAction(e -> seed2.setText(randomSeed()));
+
+		seed1.setText(randomSeed());
+		seed2.setText(randomSeed());
+
+		add(this.types, 0, 0, 5, 1);
+
 		add(assignColors, 0, 1);
 		add(clear, 1, 1);
-		add(generator, 0, 2);
-		add(addOne, 1, 2);
-		add(addMany, 2, 2);
+		add(generator, 2, 1);
+		add(addOne, 3, 1);
+		add(addMany, 4, 1);
+
+		add(new Label("Generation seed:"), 0, 2);
+		add(seed1, 1, 2, 3, 1);
+		add(rSeed1, 4, 2);
+
+		add(new Label("Options seed:"), 0, 3);
+		add(seed2, 1, 3, 3, 1);
+		add(rSeed2, 4, 3);
 
 		setPadding(new Insets(8));
 		setVgap(5);
 		setHgap(5);
 
-		getColumnConstraints().addAll(GridUtil.createColumn(33), GridUtil.createColumn(33), GridUtil.createColumn(33));
-		getRowConstraints().addAll(GridUtil.createRow(Priority.ALWAYS), GridUtil.createRow(), GridUtil.createRow());
+		getColumnConstraints().addAll(GridUtil.createColumn(18), GridUtil.createColumn(18), GridUtil.createColumn(28), GridUtil.createColumn(18), GridUtil.createColumn(18));
+		getRowConstraints().addAll(GridUtil.createRow(Priority.ALWAYS), GridUtil.createRow(), GridUtil.createRow(), GridUtil.createRow());
 	}
 
 	private void defaultConfig() {
 		int c = TypeAGenerators.LARGE_CLUSTERS.recommendedTypes();
 		int d = (200 / c) * 10;
 		for (int i = 0; i < c; i++) {
-			TypeObject obj = new TypeObject(TypeAGenerators.LARGE_CLUSTERS.generate(this.random));
+			TypeObject obj = new TypeObject(TypeAGenerators.LARGE_CLUSTERS.generate(this.optionsRandom));
 			obj.count.setValue(d);
 			this.types.getItems().add(obj);
 		}
 		assignColors();
 
-		this.types.getItems().add(new TypeObject(TypeAGenerators.WANDERER.generate(this.random)));
+		this.types.getItems().add(new TypeObject(TypeAGenerators.WANDERER.generate(this.optionsRandom)));
 	}
 
 	private void assignColors() {
@@ -149,7 +194,7 @@ public class GenerationPanel extends GridPane {
 				count++;
 		}
 
-		double offset = this.random.nextDouble();
+		double offset = this.optionsRandom.nextDouble();
 
 		int i = 0;
 		for (TypeObject obj : l) {
@@ -158,13 +203,18 @@ public class GenerationPanel extends GridPane {
 		}
 	}
 
+	private static String randomSeed() {
+		return Long.toString(ThreadLocalRandom.current().nextLong());
+	}
+
 	public void generateParticles(Universe universe) {
+		Random r = new Random(this.genSeed);
 		for (TypeObject cfg : this.types.getItems()) {
 			Type type = cfg.builder.build(universe).orElse(null);
 			if (type != null) {
 				int c = cfg.count.getValue();
 				for (int i = 0; i < c; i++)
-					universe.add(type.createRandom(this.random));
+					universe.add(type.createRandom(r));
 			}
 		}
 	}
