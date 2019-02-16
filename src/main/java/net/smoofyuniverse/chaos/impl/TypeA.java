@@ -36,10 +36,10 @@ public class TypeA implements ColoredType {
 	public final double radius, friction;
 	public final double attractionFactor, attractionRadius, repulsionFactor, repulsionRadius;
 	public final boolean flatAttraction;
-
 	public final Universe universe;
 
-	private final double attractionRadius2;
+	// Cached values
+	private final double attractionRadius2, mRadius, dRadius;
 	private final Color attractionColor, repulsionColor;
 
 	public TypeA(Universe universe, Color color, double radius, double friction, double attractionFactor, double attractionRadius, double repulsionFactor, double repulsionRadius, boolean flatAttraction) {
@@ -71,6 +71,8 @@ public class TypeA implements ColoredType {
 		this.repulsionColor = Color.color(color.getRed(), color.getGreen(), color.getBlue(), 0.2);
 		this.attractionColor = Color.color(color.getRed(), color.getGreen(), color.getBlue(), 0.05);
 		this.attractionRadius2 = attractionRadius * attractionRadius;
+		this.mRadius = (attractionRadius + repulsionRadius) / 2D;
+		this.dRadius = attractionRadius - repulsionRadius;
 	}
 
 	@Override
@@ -105,8 +107,8 @@ public class TypeA implements ColoredType {
 		Particle p = createDefault();
 		p.positionX = random.nextDouble() * universe.getSizeX();
 		p.positionY = random.nextDouble() * universe.getSizeY();
-		p.speedX = random.nextGaussian() * 0.2d;
-		p.speedY = random.nextGaussian() * 0.2d;
+		p.speedX = random.nextGaussian() * 0.2D;
+		p.speedY = random.nextGaussian() * 0.2D;
 		return p;
 	}
 
@@ -116,7 +118,7 @@ public class TypeA implements ColoredType {
 		double dy = this.universe.getDeltaY(receiver.positionY, emitter.getPositionY());
 		double d2 = dx * dx + dy * dy;
 
-		if (d2 > this.attractionRadius2 || d2 < 0.01f)
+		if (d2 > this.attractionRadius2 || d2 < 0.01D)
 			return;
 
 		double d = Math.sqrt(d2);
@@ -125,15 +127,12 @@ public class TypeA implements ColoredType {
 
 		double f;
 		if (d > this.repulsionRadius) {
-			if (this.flatAttraction) {
+			if (this.flatAttraction)
 				f = this.attractionFactor;
-			} else {
-				double numer = 2d * Math.abs(d - 0.5d * (this.attractionRadius + this.repulsionRadius));
-				double denom = this.attractionRadius - this.repulsionRadius;
-				f = this.attractionFactor * (1d - numer / denom);
-			}
+			else
+				f = this.attractionFactor * (1D - (2D * Math.abs(d - this.mRadius)) / this.dRadius);
 		} else {
-			f = this.repulsionFactor * this.repulsionRadius * (1d / (this.repulsionRadius + 2) - 1d / (d + 2));
+			f = this.repulsionFactor * this.repulsionRadius * (1D / (this.repulsionRadius + 2) - 1D / (d + 2));
 		}
 
 		receiver.accelerationX += dx * f;
