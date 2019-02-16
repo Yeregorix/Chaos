@@ -23,6 +23,7 @@
 package net.smoofyuniverse.chaos.universe;
 
 import javafx.scene.canvas.GraphicsContext;
+import net.smoofyuniverse.chaos.type.Type;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,10 +32,12 @@ import java.util.concurrent.Executor;
 import java.util.function.IntConsumer;
 
 public final class Universe {
-	public final List<Particle> particles = new ArrayList<>();
+	private List<UParticle> particles = new ArrayList<>();
 	private double sizeX, sizeY, halfX, halfY;
 	private Executor executor;
 	private int chunks;
+
+	private UParticle selection;
 
 	public Universe(Executor executor, int chunks) {
 		this.executor = executor;
@@ -118,47 +121,98 @@ public final class Universe {
 		doAt(x, y, radius, (a, b) -> g.fillOval(a - radius, b - radius, radius2, radius2));
 	}
 
+	public void add(Particle particle) {
+		if (particle.type != null)
+			this.particles.add(new UParticle(particle));
+	}
+
+	public void clear() {
+		this.particles.clear();
+		this.selection = null;
+	}
+
+	public void select(double x, double y) {
+		double sel_d2 = Double.MAX_VALUE;
+		UParticle sel = null;
+
+		for (UParticle p : this.particles) {
+			double dx = p.positionX - x, dy = p.positionY - y;
+			double d2 = dx * dx + dy * dy;
+			if (d2 < sel_d2 && d2 < p.radius * p.radius) {
+				sel_d2 = d2;
+				sel = p;
+			}
+		}
+
+		if (sel != null) {
+			if (this.selection != null)
+				this.selection.selected = false;
+
+			sel.selected = true;
+			this.selection = sel;
+		}
+	}
+
+	public void deselect() {
+		if (this.selection != null)
+			this.selection.selected = false;
+		this.selection = null;
+	}
+
+	public void moveSelection(double x, double y) {
+		if (this.selection == null || this.selection.type == null)
+			return;
+
+		this.selection.mutable.positionX = x;
+		this.selection.mutable.positionY = y;
+		this.selection.positionX = x;
+		this.selection.positionY = y;
+	}
+
 	public void tick() {
 		if (this.sizeX == 0 || this.sizeY == 0)
 			throw new IllegalStateException("Invalid size");
 
 		int size = this.particles.size();
 		forEach(i -> {
-			Particle p = this.particles.get(i);
-			if (p.type == null)
+			Particle m = this.particles.get(i).mutable;
+			if (m.type == null)
 				return;
 
 			for (int j = 0; j < size; j++) {
 				if (i == j)
 					continue;
 
-				Particle p2 = this.particles.get(j);
-				if (p2.type == null)
-					continue;
-
-				p2.type.applyInteractions(p2, p);
-				if (p.type == null)
+				UParticle e = this.particles.get(j);
+				e.type.applyInteractions(e, m);
+				if (m.type == null)
 					break;
 			}
 		}, size);
 
 		forEach(i -> {
-			Particle p = this.particles.get(i);
-			if (p.type == null)
+			UParticle p = this.particles.get(i);
+			Particle m = p.mutable;
+			if (m.type == null)
 				return;
 
-			p.type.tickStandalone(p);
-			if (p.type == null)
+			m.type.tickStandalone(m, p.selected);
+			if (m.type == null)
 				return;
 
-			validatePositionX(p);
-			validatePositionY(p);
+			validatePositionX(m);
+			validatePositionY(m);
 
-			p.accelerationX = 0;
-			p.accelerationY = 0;
+			m.accelerationX = 0;
+			m.accelerationY = 0;
 		}, size);
 
-		this.particles.removeIf(p -> p.type == null);
+		this.particles.removeIf(p -> {
+			if (p.mutable.type == null)
+				return true;
+			p.save();
+			return false;
+		});
 	}
 
 	private void forEach(IntConsumer consumer, int size) {
@@ -211,12 +265,85 @@ public final class Universe {
 		Particle[] array = new Particle[this.particles.size()];
 
 		for (int i = 0; i < array.length; i++)
-			array[i] = this.particles.get(i).copy();
+			array[i] = this.particles.get(i).mutable.copy();
 
 		return new Snapshot(this.sizeX, this.sizeY, array);
 	}
 
 	private interface BiDoubleConsumer {
 		void accept(double a, double b);
+	}
+
+	private static class UParticle implements IParticle {
+		public final Particle mutable;
+		public double accelerationX, accelerationY;
+		public double speedX, speedY;
+		public double positionX, positionY;
+		public double radius;
+		public long ticks;
+		public Type type;
+		public boolean selected;
+
+		public UParticle(Particle mutable) {
+			this.mutable = mutable;
+			save();
+		}
+
+		public void save() {
+			this.accelerationX = this.mutable.accelerationX;
+			this.accelerationY = this.mutable.accelerationY;
+			this.speedX = this.mutable.speedX;
+			this.speedY = this.mutable.speedY;
+			this.positionX = this.mutable.positionX;
+			this.positionY = this.mutable.positionY;
+			this.radius = this.mutable.radius;
+			this.ticks = this.mutable.ticks;
+			this.type = this.mutable.type;
+		}
+
+		@Override
+		public double getAccelerationX() {
+			return this.accelerationX;
+		}
+
+		@Override
+		public double getAccelerationY() {
+			return this.accelerationY;
+		}
+
+		@Override
+		public double getSpeedX() {
+			return this.speedX;
+		}
+
+		@Override
+		public double getSpeedY() {
+			return this.speedY;
+		}
+
+		@Override
+		public double getPositionX() {
+			return this.positionX;
+		}
+
+		@Override
+		public double getPositionY() {
+			return this.positionY;
+		}
+
+		@Override
+		public double getRadius() {
+			return this.radius;
+		}
+
+		@Override
+		public long getTicks() {
+			return this.ticks;
+		}
+
+		@Override
+		public Type geType() {
+			return this.type;
+		}
 	}
 }

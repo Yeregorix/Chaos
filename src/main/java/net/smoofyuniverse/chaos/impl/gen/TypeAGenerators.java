@@ -23,7 +23,6 @@
 package net.smoofyuniverse.chaos.impl.gen;
 
 import javafx.scene.paint.Color;
-import net.smoofyuniverse.chaos.impl.TypeA;
 import net.smoofyuniverse.chaos.impl.TypeABuilder;
 
 import java.util.Arrays;
@@ -62,8 +61,6 @@ public class TypeAGenerators {
 		}
 	};
 
-	private static final TypeA WANDERER_TYPE = new TypeA(Color.WHITE, 8, 0.005, 1.4, 43, 10, 40, false);
-
 	public static final TypeAGenerator WANDERER = new TypeAGenerator() {
 		@Override
 		public int recommendedTypes() {
@@ -77,7 +74,7 @@ public class TypeAGenerators {
 
 		@Override
 		public TypeABuilder generate(Random random) {
-			return new TypeABuilder(WANDERER_TYPE);
+			return new TypeABuilder(Color.WHITE, 8, 0.005, 1.4, 43, 10, 40, false);
 		}
 	};
 }

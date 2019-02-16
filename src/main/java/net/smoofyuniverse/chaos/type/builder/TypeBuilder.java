@@ -24,14 +24,13 @@ package net.smoofyuniverse.chaos.type.builder;
 
 import javafx.scene.Node;
 import net.smoofyuniverse.chaos.type.Type;
+import net.smoofyuniverse.chaos.universe.Universe;
 
 import java.util.Optional;
 
 public interface TypeBuilder<T extends Type> {
 
-	void set(T value);
-
-	Optional<T> build();
+	Optional<T> build(Universe universe);
 
 	Node getNode();
 }

@@ -30,6 +30,7 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
 import net.smoofyuniverse.chaos.type.builder.ColoredTypeBuilder;
+import net.smoofyuniverse.chaos.universe.Universe;
 import net.smoofyuniverse.common.fxui.field.DoubleField;
 import net.smoofyuniverse.common.util.GridUtil;
 
@@ -44,9 +45,17 @@ public class TypeABuilder implements ColoredTypeBuilder<TypeA> {
 
 	private GridPane pane = new GridPane();
 
-	public TypeABuilder(TypeA value) {
+	public TypeABuilder(Color color, double radius, double friction, double attractionFactor, double attractionRadius, double repulsionFactor, double repulsionRadius, boolean flatAttraction) {
 		this();
-		set(value);
+
+		this.color.set(color);
+		this.radius.setValue(radius);
+		this.friction.setValue(friction);
+		this.attractionFactor.setValue(attractionFactor);
+		this.attractionRadius.setValue(attractionRadius);
+		this.repulsionFactor.setValue(repulsionFactor);
+		this.repulsionRadius.setValue(repulsionRadius);
+		this.flatAttraction.setSelected(flatAttraction);
 	}
 
 	public TypeABuilder() {
@@ -82,21 +91,9 @@ public class TypeABuilder implements ColoredTypeBuilder<TypeA> {
 	}
 
 	@Override
-	public void set(TypeA value) {
-		this.color.set(value.color);
-		this.radius.setValue(value.radius);
-		this.friction.setValue(value.friction);
-		this.attractionFactor.setValue(value.attractionFactor);
-		this.attractionRadius.setValue(value.attractionRadius);
-		this.repulsionFactor.setValue(value.repulsionFactor);
-		this.repulsionRadius.setValue(value.repulsionRadius);
-		this.flatAttraction.setSelected(value.flatAttraction);
-	}
-
-	@Override
-	public Optional<TypeA> build() {
+	public Optional<TypeA> build(Universe universe) {
 		try {
-			return Optional.of(new TypeA(this.color.get(),
+			return Optional.of(new TypeA(universe, this.color.get(),
 					this.radius.getValue(), this.friction.getValue(),
 					this.attractionFactor.getValue(), this.attractionRadius.getValue(),
 					this.repulsionFactor.getValue(), this.repulsionRadius.getValue(),

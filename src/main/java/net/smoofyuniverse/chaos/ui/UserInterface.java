@@ -30,7 +30,6 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
-import net.smoofyuniverse.chaos.universe.Particle;
 import net.smoofyuniverse.chaos.universe.Snapshot;
 import net.smoofyuniverse.chaos.universe.Universe;
 import net.smoofyuniverse.common.app.App;
@@ -54,7 +53,6 @@ public class UserInterface extends StackPane {
 	private boolean pause = true, generate = true, details = false;
 	private int forcedTicks = 0;
 	private long age, tau = 25;
-	private Particle selection;
 
 	public UserInterface() {
 		this.stage2.setScene(new Scene(this.generationPanel));
@@ -70,42 +68,9 @@ public class UserInterface extends StackPane {
 		this.canvas.widthProperty().addListener((v, oldV, newV) -> this.universe.setSizeX(newV.doubleValue()));
 		this.canvas.heightProperty().addListener((v, oldV, newV) -> this.universe.setSizeY(newV.doubleValue()));
 
-		this.canvas.setOnMousePressed(e -> {
-			double x = e.getX(), y = e.getY();
-			double sel_d2 = Double.MAX_VALUE;
-			Particle sel = null;
-
-			for (Particle p : this.universe.particles) {
-				double dx = p.positionX - x, dy = p.positionY - y;
-				double d2 = dx * dx + dy * dy;
-				if (d2 < sel_d2 && d2 < p.radius * p.radius) {
-					sel_d2 = d2;
-					sel = p;
-				}
-			}
-
-			if (sel != null) {
-				if (this.selection != null)
-					this.selection.selected = false;
-
-				sel.selected = true;
-				this.selection = sel;
-			}
-		});
-
-		this.canvas.setOnMouseReleased(e -> {
-			if (this.selection != null)
-				this.selection.selected = false;
-			this.selection = null;
-		});
-
-		this.canvas.setOnMouseDragged(e -> {
-			if (this.selection == null || this.selection.type == null)
-				return;
-
-			this.selection.positionX = e.getX();
-			this.selection.positionY = e.getY();
-		});
+		this.canvas.setOnMousePressed(e -> this.universe.select(e.getX(), e.getY()));
+		this.canvas.setOnMouseReleased(e -> this.universe.deselect());
+		this.canvas.setOnMouseDragged(e -> this.universe.moveSelection(e.getX(), e.getY()));
 
 		getChildren().add(this.canvas);
 	}
@@ -172,7 +137,7 @@ public class UserInterface extends StackPane {
 			long t = System.currentTimeMillis();
 
 			if (this.generate) {
-				this.universe.particles.clear();
+				this.universe.clear();
 				this.age = 0;
 			}
 

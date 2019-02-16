@@ -20,24 +20,26 @@
  * SOFTWARE.
  */
 
-package net.smoofyuniverse.chaos.type;
+package net.smoofyuniverse.chaos.universe;
 
-import javafx.scene.canvas.GraphicsContext;
-import net.smoofyuniverse.chaos.universe.IParticle;
-import net.smoofyuniverse.chaos.universe.Particle;
+import net.smoofyuniverse.chaos.type.Type;
 
-import java.util.Random;
+public interface IParticle {
+	double getAccelerationX();
 
-public interface Type {
-	void draw1(GraphicsContext g, IParticle particle);
+	double getAccelerationY();
 
-	void draw2(GraphicsContext g, IParticle particle);
+	double getSpeedX();
 
-	Particle createDefault();
+	double getSpeedY();
 
-	Particle createRandom(Random random);
+	double getPositionX();
 
-	void applyInteractions(IParticle emitter, Particle receiver);
+	double getPositionY();
 
-	void tickStandalone(Particle particle, boolean selected);
+	double getRadius();
+
+	long getTicks();
+
+	Type geType();
 }

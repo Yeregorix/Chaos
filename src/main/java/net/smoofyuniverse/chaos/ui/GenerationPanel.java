@@ -160,11 +160,11 @@ public class GenerationPanel extends GridPane {
 
 	public void generateParticles(Universe universe) {
 		for (TypeObject cfg : this.types.getItems()) {
-			Type type = cfg.builder.build().orElse(null);
+			Type type = cfg.builder.build(universe).orElse(null);
 			if (type != null) {
 				int c = cfg.count.getValue();
 				for (int i = 0; i < c; i++)
-					universe.particles.add(type.createRandom(universe, this.random));
+					universe.add(type.createRandom(this.random));
 			}
 		}
 	}

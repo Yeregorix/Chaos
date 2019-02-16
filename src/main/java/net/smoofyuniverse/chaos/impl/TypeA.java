@@ -25,6 +25,7 @@ package net.smoofyuniverse.chaos.impl;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 import net.smoofyuniverse.chaos.type.ColoredType;
+import net.smoofyuniverse.chaos.universe.IParticle;
 import net.smoofyuniverse.chaos.universe.Particle;
 import net.smoofyuniverse.chaos.universe.Universe;
 
@@ -36,10 +37,14 @@ public class TypeA implements ColoredType {
 	public final double attractionFactor, attractionRadius, repulsionFactor, repulsionRadius;
 	public final boolean flatAttraction;
 
+	public final Universe universe;
+
 	private final double attractionRadius2;
 	private final Color attractionColor, repulsionColor;
 
-	public TypeA(Color color, double radius, double friction, double attractionFactor, double attractionRadius, double repulsionFactor, double repulsionRadius, boolean flatAttraction) {
+	public TypeA(Universe universe, Color color, double radius, double friction, double attractionFactor, double attractionRadius, double repulsionFactor, double repulsionRadius, boolean flatAttraction) {
+		if (universe == null)
+			throw new IllegalArgumentException("universe");
 		if (color == null)
 			throw new IllegalArgumentException("color");
 		if (radius <= 0)
@@ -53,6 +58,7 @@ public class TypeA implements ColoredType {
 		if (repulsionRadius > attractionRadius)
 			throw new IllegalArgumentException("repulsionRadius, attractionRadius");
 
+		this.universe = universe;
 		this.color = color;
 		this.radius = radius;
 		this.friction = friction;
@@ -73,30 +79,30 @@ public class TypeA implements ColoredType {
 	}
 
 	@Override
-	public void draw1(GraphicsContext g, Particle p) {
+	public void draw1(GraphicsContext g, IParticle p) {
 		g.setStroke(this.repulsionColor);
-		p.universe.strokeCircle(g, p.positionX, p.positionY, this.repulsionRadius);
+		this.universe.strokeCircle(g, p.getPositionX(), p.getPositionY(), this.repulsionRadius);
 		g.setStroke(this.attractionColor);
-		p.universe.strokeCircle(g, p.positionX, p.positionY, this.attractionRadius);
+		this.universe.strokeCircle(g, p.getPositionX(), p.getPositionY(), this.attractionRadius);
 	}
 
 	@Override
-	public void draw2(GraphicsContext g, Particle p) {
+	public void draw2(GraphicsContext g, IParticle p) {
 		g.setFill(this.color);
-		p.universe.fillCircle(g, p.positionX, p.positionY, this.radius);
+		this.universe.fillCircle(g, p.getPositionX(), p.getPositionY(), this.radius);
 	}
 
 	@Override
-	public Particle createDefault(Universe universe) {
-		Particle p = new Particle(universe);
+	public Particle createDefault() {
+		Particle p = new Particle();
 		p.type = this;
 		p.radius = this.radius;
 		return p;
 	}
 
 	@Override
-	public Particle createRandom(Universe universe, Random random) {
-		Particle p = createDefault(universe);
+	public Particle createRandom(Random random) {
+		Particle p = createDefault();
 		p.positionX = random.nextDouble() * universe.getSizeX();
 		p.positionY = random.nextDouble() * universe.getSizeY();
 		p.speedX = random.nextGaussian() * 0.2d;
@@ -105,9 +111,9 @@ public class TypeA implements ColoredType {
 	}
 
 	@Override
-	public void applyInteractions(Particle emitter, Particle receiver) {
-		double dx = receiver.universe.getDeltaX(receiver.positionX, emitter.positionX);
-		double dy = receiver.universe.getDeltaY(receiver.positionY, emitter.positionY);
+	public void applyInteractions(IParticle emitter, Particle receiver) {
+		double dx = this.universe.getDeltaX(receiver.positionX, emitter.getPositionX());
+		double dy = this.universe.getDeltaY(receiver.positionY, emitter.getPositionY());
 		double d2 = dx * dx + dy * dy;
 
 		if (d2 > this.attractionRadius2 || d2 < 0.01f)
@@ -135,8 +141,8 @@ public class TypeA implements ColoredType {
 	}
 
 	@Override
-	public void tickStandalone(Particle p) {
-		if (p.selected) {
+	public void tickStandalone(Particle p, boolean selected) {
+		if (selected) {
 			p.speedX = 0;
 			p.speedY = 0;
 		} else {
