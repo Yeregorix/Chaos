@@ -84,10 +84,15 @@ public class TypeABuilder implements ColoredTypeBuilder<TypeA> {
 		this.pane.add(new Label("Flat attraction:"), 0, 3);
 		this.pane.add(this.flatAttraction, 1, 3);
 
-		this.pane.setHgap(3);
-		this.pane.setVgap(3);
+		this.pane.setHgap(5);
+		this.pane.setVgap(5);
 
 		this.pane.getColumnConstraints().addAll(GridUtil.createColumn(15), GridUtil.createColumn(35), GridUtil.createColumn(15), GridUtil.createColumn(35));
+	}
+
+	@Override
+	public String getTypeName() {
+		return "A";
 	}
 
 	@Override

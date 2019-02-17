@@ -41,7 +41,7 @@ import java.util.concurrent.Executors;
 
 public class UserInterface extends StackPane {
 	private static final Logger logger = App.getLogger("UserInterface");
-	private static final Color details_background = Color.color(0.9, 0.9, 0.9, 0.3);
+	private static final Color details_background = Color.color(0, 0, 0, 0.5);
 
 	private final GenerationPanel generationPanel = new GenerationPanel();
 	private final Stage stage2 = new Stage();

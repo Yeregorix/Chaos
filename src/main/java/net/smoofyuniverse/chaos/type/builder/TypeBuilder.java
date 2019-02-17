@@ -30,6 +30,8 @@ import java.util.Optional;
 
 public interface TypeBuilder<T extends Type> {
 
+	String getTypeName();
+
 	Optional<T> build(Universe universe);
 
 	Node getNode();

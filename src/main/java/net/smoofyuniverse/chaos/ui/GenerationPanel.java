@@ -164,7 +164,7 @@ public class GenerationPanel extends GridPane {
 		add(seed2, 1, 3, 3, 1);
 		add(rSeed2, 4, 3);
 
-		setPadding(new Insets(8));
+		setPadding(new Insets(5));
 		setVgap(5);
 		setHgap(5);
 
@@ -229,6 +229,7 @@ public class GenerationPanel extends GridPane {
 	}
 
 	public class TypeCell extends ListCell<TypeObject> {
+		private final Label typeName = new Label();
 		private final IntegerField count = new IntegerField(0, 3000);
 		private final ColorPicker colorPicker = new ColorPicker();
 		private final StackPane options = new StackPane();
@@ -239,6 +240,8 @@ public class GenerationPanel extends GridPane {
 		public TypeCell() {
 			setContentDisplay(ContentDisplay.GRAPHIC_ONLY);
 
+			this.typeName.setStyle("-fx-font-weight: bold;");
+
 			Button remove = new Button("Remove");
 			remove.setOnAction(e -> GenerationPanel.this.types.getItems().remove(getIndex()));
 
@@ -246,15 +249,16 @@ public class GenerationPanel extends GridPane {
 			this.colorPicker.setMaxWidth(Double.MAX_VALUE);
 			remove.setMaxWidth(Double.MAX_VALUE);
 
-			this.pane.add(this.count, 0, 0);
-			this.pane.add(this.colorPicker, 1, 0);
-			this.pane.add(remove, 2, 0);
-			this.pane.add(this.options, 0, 1, 3, 1);
+			this.pane.add(this.typeName, 0, 0);
+			this.pane.add(this.count, 1, 0);
+			this.pane.add(this.colorPicker, 2, 0);
+			this.pane.add(remove, 3, 0);
+			this.pane.add(this.options, 0, 1, 4, 1);
 
 			this.pane.setVgap(5);
 			this.pane.setHgap(5);
 
-			this.pane.getColumnConstraints().addAll(GridUtil.createColumn(40), GridUtil.createColumn(40), GridUtil.createColumn(20));
+			this.pane.getColumnConstraints().addAll(GridUtil.createColumn(15), GridUtil.createColumn(35), GridUtil.createColumn(35), GridUtil.createColumn(15));
 			this.pane.getRowConstraints().addAll(GridUtil.createRow(), GridUtil.createRow(Priority.ALWAYS));
 		}
 
@@ -274,6 +278,8 @@ public class GenerationPanel extends GridPane {
 
 		private Node updateContent() {
 			TypeObject obj = getItem();
+
+			this.typeName.setText("Type: " + obj.builder.getTypeName());
 
 			this.curCount = obj.count;
 			this.count.valueProperty().bindBidirectional(this.curCount);
