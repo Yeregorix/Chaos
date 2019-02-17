@@ -23,29 +23,26 @@
 package net.smoofyuniverse.chaos.impl.gen;
 
 import net.smoofyuniverse.chaos.impl.TypeABuilder;
+import net.smoofyuniverse.chaos.util.NumberGenerator;
 
 import java.util.Random;
 
 public final class TypeARandomGenerator implements TypeAGenerator {
 	public final String name;
 	public final int recommendedTypes;
-	public final double attractionMean, attractionStd,
-			repulsionRadiusMin, repulsionRadiusMax,
-			attractionRadiusMin, attractionRadiusMax,
-			friction;
-	public final boolean flatAttraction;
+	public final NumberGenerator radius, attractionFactor, attractionRadius, repulsionFactor, repulsionRadius, friction;
+	public final double flatAttractionChance;
 
-	public TypeARandomGenerator(String name, int recommendedTypes, double attractionMean, double attractionStd, double repulsionRadiusMin, double repulsionRadiusMax, double attractionRadiusMin, double attractionRadiusMax, double friction, boolean flatAttraction) {
+	public TypeARandomGenerator(String name, int recommendedTypes, NumberGenerator radius, NumberGenerator attractionFactor, NumberGenerator attractionRadius, NumberGenerator repulsionFactor, NumberGenerator repulsionRadius, NumberGenerator friction, double flatAttractionChance) {
 		this.name = name;
 		this.recommendedTypes = recommendedTypes;
-		this.attractionMean = attractionMean;
-		this.attractionStd = attractionStd;
-		this.repulsionRadiusMin = repulsionRadiusMin;
-		this.repulsionRadiusMax = repulsionRadiusMax;
-		this.attractionRadiusMin = attractionRadiusMin;
-		this.attractionRadiusMax = attractionRadiusMax;
+		this.radius = radius;
+		this.attractionFactor = attractionFactor;
+		this.attractionRadius = attractionRadius;
+		this.repulsionFactor = repulsionFactor;
+		this.repulsionRadius = repulsionRadius;
 		this.friction = friction;
-		this.flatAttraction = flatAttraction;
+		this.flatAttractionChance = flatAttractionChance;
 	}
 
 	@Override
@@ -60,17 +57,32 @@ public final class TypeARandomGenerator implements TypeAGenerator {
 
 	@Override
 	public TypeABuilder generate(Random random) {
-		double repulsionRadius = this.repulsionRadiusMin + random.nextDouble() * (this.repulsionRadiusMax - this.repulsionRadiusMin);
-		double attractionRadius = Math.max(this.attractionRadiusMin + random.nextDouble() * (this.attractionRadiusMax - this.attractionRadiusMin), repulsionRadius);
+		double radius = this.radius.generate(random);
+		if (radius < 0)
+			radius = 0;
+
+		double repulsionRadius = this.repulsionRadius.generate(random);
+		if (repulsionRadius < radius)
+			repulsionRadius = radius;
+
+		double attractionRadius = this.attractionRadius.generate(random);
+		if (attractionRadius < repulsionRadius)
+			attractionRadius = repulsionRadius;
+
+		double friction = this.friction.generate(random);
+		if (friction < 0)
+			friction = 0;
+		else if (friction > 1)
+			friction = 1;
 
 		TypeABuilder b = new TypeABuilder();
-		b.radius.setValue(5);
-		b.friction.setValue(this.friction);
-		b.attractionFactor.setValue(random.nextGaussian() * this.attractionStd + this.attractionMean);
+		b.radius.setValue(radius);
+		b.friction.setValue(friction);
+		b.attractionFactor.setValue(this.attractionFactor.generate(random));
 		b.attractionRadius.setValue(attractionRadius);
-		b.repulsionFactor.setValue(2);
+		b.repulsionFactor.setValue(this.repulsionFactor.generate(random));
 		b.repulsionRadius.setValue(repulsionRadius);
-		b.flatAttraction.setSelected(this.flatAttraction);
+		b.flatAttraction.setSelected(random.nextDouble() < this.flatAttractionChance);
 		return b;
 	}
 }

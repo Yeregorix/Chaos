@@ -29,17 +29,20 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
+import static net.smoofyuniverse.chaos.util.NumberGenerator.linear;
+import static net.smoofyuniverse.chaos.util.NumberGenerator.normal;
+
 public class TypeAGenerators {
-	public static final TypeARandomGenerator BALANCED = new TypeARandomGenerator("Balanced", 9, -0.02f, 0.06f, 0.0f, 20.0f, 20.0f, 70.0f, 0.05f, false),
-			CHAOS = new TypeARandomGenerator("Chaos", 6, 0.02f, 0.04f, 0.0f, 30.0f, 30.0f, 100.0f, 0.01f, false),
-			DIVERSITY = new TypeARandomGenerator("Diversity", 12, -0.01f, 0.04f, 0.0f, 20.0f, 10.0f, 60.0f, 0.05f, true),
-			FRICTIONLESS = new TypeARandomGenerator("Frictionless", 6, 0.01f, 0.005f, 10.0f, 10.0f, 10.0f, 60.0f, 0.0f, true),
-			GLIDERS = new TypeARandomGenerator("Gliders", 6, 0.0f, 0.06f, 0.0f, 20.0f, 10.0f, 50.0f, 0.1f, true),
-			HOMOGENEITY = new TypeARandomGenerator("Homogeneity", 4, 0.0f, 0.04f, 10.0f, 10.0f, 10.0f, 80.0f, 0.05f, true),
-			LARGE_CLUSTERS = new TypeARandomGenerator("Large clusters", 6, 0.025f, 0.02f, 0.0f, 30.0f, 30.0f, 100.0f, 0.2f, false),
-			MEDIUM_CLUSTERS = new TypeARandomGenerator("Medium clusters", 6, 0.02f, 0.05f, 0.0f, 20.0f, 20.0f, 50.0f, 0.05f, false),
-			QUIESCENCE = new TypeARandomGenerator("Quiescence", 6, -0.02f, 0.1f, 10.0f, 20.0f, 20.0f, 60.0f, 0.2f, false),
-			SMALL_CLUSTERS = new TypeARandomGenerator("Small clusters", 6, -0.005f, 0.01f, 10.0f, 10.0f, 20.0f, 50.0f, 0.01f, false);
+	public static final TypeARandomGenerator BALANCED = classicGen("Balanced", 9, -0.02, 0.06, 0.0, 20.0, 20.0, 70.0, 0.05, false),
+			CHAOS = classicGen("Chaos", 6, 0.02, 0.04, 0.0, 30.0, 30.0, 100.0, 0.01, false),
+			DIVERSITY = classicGen("Diversity", 12, -0.01, 0.04, 0.0, 20.0, 10.0, 60.0, 0.05, true),
+			FRICTIONLESS = classicGen("Frictionless", 6, 0.01, 0.005, 10.0, 10.0, 10.0, 60.0, 0.0, true),
+			GLIDERS = classicGen("Gliders", 6, 0.0, 0.06, 0.0, 20.0, 10.0, 50.0, 0.1, true),
+			HOMOGENEITY = classicGen("Homogeneity", 4, 0.0, 0.04, 10.0, 10.0, 10.0, 80.0, 0.05, true),
+			LARGE_CLUSTERS = classicGen("Large clusters", 6, 0.025, 0.02, 0.0, 30.0, 30.0, 100.0, 0.2, false),
+			MEDIUM_CLUSTERS = classicGen("Medium clusters", 6, 0.02, 0.05, 0.0, 20.0, 20.0, 50.0, 0.05, false),
+			QUIESCENCE = classicGen("Quiescence", 6, -0.02, 0.1, 10.0, 20.0, 20.0, 60.0, 0.2, false),
+			SMALL_CLUSTERS = classicGen("Small clusters", 6, -0.005, 0.01, 10.0, 10.0, 20.0, 50.0, 0.01, false);
 
 	public static final List<TypeARandomGenerator> RANDOMS = Arrays.asList(BALANCED, CHAOS, DIVERSITY,
 			FRICTIONLESS, GLIDERS, HOMOGENEITY, LARGE_CLUSTERS, MEDIUM_CLUSTERS, QUIESCENCE, SMALL_CLUSTERS);
@@ -77,4 +80,8 @@ public class TypeAGenerators {
 			return new TypeABuilder(Color.WHITE, 8, 0.005, 1.4, 43, 10, 40, false);
 		}
 	};
+
+	private static TypeARandomGenerator classicGen(String name, int recommendedTypes, double attractionMean, double attractionStd, double repulsionRadiusMin, double repulsionRadiusMax, double attractionRadiusMin, double attractionRadiusMax, double friction, boolean flatAttraction) {
+		return new TypeARandomGenerator(name, recommendedTypes, normal(5, 0.5), normal(attractionMean, attractionStd), linear(attractionRadiusMin, attractionRadiusMax), normal(2, 0.5), linear(repulsionRadiusMin, repulsionRadiusMax), normal(friction, 0.001), flatAttraction ? 0.9 : 0.1);
+	}
 }

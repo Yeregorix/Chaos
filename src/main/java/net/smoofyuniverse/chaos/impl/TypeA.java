@@ -55,6 +55,8 @@ public class TypeA implements ColoredType {
 			throw new IllegalArgumentException("attractionRadius");
 		if (repulsionRadius < 0)
 			throw new IllegalArgumentException("repulsionRadius");
+		if (radius > repulsionRadius)
+			throw new IllegalArgumentException("radius, repulsionRadius");
 		if (repulsionRadius > attractionRadius)
 			throw new IllegalArgumentException("repulsionRadius, attractionRadius");
 
