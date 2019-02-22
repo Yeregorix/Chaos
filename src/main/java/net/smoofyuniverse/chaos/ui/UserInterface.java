@@ -23,10 +23,17 @@
 package net.smoofyuniverse.chaos.ui;
 
 import javafx.application.Platform;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
+import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.control.Label;
 import javafx.scene.input.KeyCode;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundFill;
+import javafx.scene.layout.CornerRadii;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
@@ -47,9 +54,14 @@ public class UserInterface extends StackPane {
 	private final Stage stage2 = new Stage();
 
 	private final Canvas canvas = new Canvas();
+	private final Label help = new Label("Controls:\nH: Display or hide this help.\nSpace: Pause the universe.\nD: Show details.\nR: Regenerate the universe.\nO: Open options." +
+			"\nAdd: Increase minimum tick duration.\nSubstract: Decrease minimum tick duration.\n1 to 9: Force n ticks to process.\n0: Clear remaining forced ticks." +
+			"\nF11: Fullscreen.");
+
 	private final ExecutorService executor = Executors.newFixedThreadPool(4);
 	private final Universe universe = new Universe(this.executor, 12);
 
+	private BooleanProperty showHelp = new SimpleBooleanProperty(true);
 	private boolean pause = true, generate = true, details = false;
 	private int forcedTicks = 0;
 	private long age, tau = 25;
@@ -72,11 +84,24 @@ public class UserInterface extends StackPane {
 		this.canvas.setOnMouseReleased(e -> this.universe.deselect());
 		this.canvas.setOnMouseDragged(e -> this.universe.moveSelection(e.getX(), e.getY()));
 
-		getChildren().add(this.canvas);
+		this.showHelp.addListener((v, oldV, newV) -> {
+			if (newV)
+				getChildren().add(this.help);
+			else
+				getChildren().remove(this.help);
+		});
+
+		this.help.setTextFill(Color.WHITE);
+		this.help.setBackground(new Background(new BackgroundFill(Color.DARKGRAY, new CornerRadii(8), new Insets(-10))));
+
+		getChildren().addAll(this.canvas, this.help);
 	}
 
 	public void keyPressed(KeyCode code) {
 		switch (code) {
+			case H:
+				this.showHelp.set(!this.showHelp.get());
+				break;
 			case SPACE:
 				this.pause = !this.pause;
 				break;
