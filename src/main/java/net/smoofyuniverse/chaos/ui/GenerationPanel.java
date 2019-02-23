@@ -34,6 +34,7 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.util.StringConverter;
+import net.smoofyuniverse.chaos.impl.gen.TypeAGenerator;
 import net.smoofyuniverse.chaos.impl.gen.TypeAGenerators;
 import net.smoofyuniverse.chaos.type.Type;
 import net.smoofyuniverse.chaos.type.builder.ColoredTypeBuilder;
@@ -111,7 +112,7 @@ public class GenerationPanel extends GridPane {
 				return;
 
 			int c = gen.recommendedTypes();
-			int d = (200 / c) * 10;
+			int d = (160 / c) * 10;
 			for (int i = 0; i < c; i++) {
 				TypeBuilder<?> b = gen.generate(this.optionsRandom);
 				if (b instanceof ColoredTypeBuilder)
@@ -173,10 +174,11 @@ public class GenerationPanel extends GridPane {
 	}
 
 	private void defaultConfig() {
-		int c = TypeAGenerators.LARGE_CLUSTERS.recommendedTypes();
-		int d = (200 / c) * 10;
+		TypeAGenerator gen = TypeAGenerators.RANDOMS.get(this.optionsRandom.nextInt(TypeAGenerators.RANDOMS.size()));
+		int c = gen.recommendedTypes();
+		int d = (160 / c) * 10;
 		for (int i = 0; i < c; i++) {
-			TypeObject obj = new TypeObject(TypeAGenerators.LARGE_CLUSTERS.generate(this.optionsRandom));
+			TypeObject obj = new TypeObject(gen.generate(this.optionsRandom));
 			obj.count.setValue(d);
 			this.types.getItems().add(obj);
 		}
