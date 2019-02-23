@@ -10,6 +10,9 @@ targetCompatibility = 1.8
 
 repositories {
     maven {
+        url = 'https://repo.spongepowered.org/maven'
+    }
+    maven {
         url 'https://oss.sonatype.org/content/repositories/snapshots'
     }
 }
@@ -20,6 +23,7 @@ configurations.all {
 
 dependencies {
     compile 'net.smoofyuniverse:appcommon:1.0.0-SNAPSHOT'
+    compile 'com.flowpowered:flow-noise:1.0.1-SNAPSHOT'
 }
 
 task shadedJar(type: Jar) {

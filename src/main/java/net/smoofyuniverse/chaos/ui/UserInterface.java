@@ -37,6 +37,8 @@ import javafx.scene.layout.CornerRadii;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
+import net.smoofyuniverse.chaos.background.BackgroundGenerator;
+import net.smoofyuniverse.chaos.background.SpaceGenerator;
 import net.smoofyuniverse.chaos.universe.Snapshot;
 import net.smoofyuniverse.chaos.universe.Universe;
 import net.smoofyuniverse.common.app.App;
@@ -60,6 +62,7 @@ public class UserInterface extends StackPane {
 
 	private final ExecutorService executor = Executors.newFixedThreadPool(4);
 	private final Universe universe = new Universe(this.executor, 12);
+	private final BackgroundGenerator backgroundGen = new SpaceGenerator(Color.BLACK, Color.BLUE);
 
 	private BooleanProperty showHelp = new SimpleBooleanProperty(true);
 	private boolean pause = true, generate = true, details = false;
@@ -77,8 +80,14 @@ public class UserInterface extends StackPane {
 		this.canvas.widthProperty().bind(widthProperty());
 		this.canvas.heightProperty().bind(heightProperty());
 
-		this.canvas.widthProperty().addListener((v, oldV, newV) -> this.universe.setSizeX(newV.doubleValue()));
-		this.canvas.heightProperty().addListener((v, oldV, newV) -> this.universe.setSizeY(newV.doubleValue()));
+		this.canvas.widthProperty().addListener((v, oldV, newV) -> {
+			this.universe.setSizeX(newV.doubleValue());
+			prepareBackground();
+		});
+		this.canvas.heightProperty().addListener((v, oldV, newV) -> {
+			this.universe.setSizeY(newV.doubleValue());
+			prepareBackground();
+		});
 
 		this.canvas.setOnMousePressed(e -> this.universe.select(e.getX(), e.getY()));
 		this.canvas.setOnMouseReleased(e -> this.universe.deselect());
@@ -95,6 +104,10 @@ public class UserInterface extends StackPane {
 		this.help.setBackground(new Background(new BackgroundFill(Color.DARKGRAY, new CornerRadii(8), new Insets(-10))));
 
 		getChildren().addAll(this.canvas, this.help);
+	}
+
+	private void prepareBackground() {
+		this.backgroundGen.prepare(this.universe.getSizeX(), this.universe.getSizeY());
 	}
 
 	public void keyPressed(KeyCode code) {
@@ -121,7 +134,7 @@ public class UserInterface extends StackPane {
 					this.tau++;
 				break;
 			case SUBTRACT:
-				if (this.tau > 1)
+				if (this.tau > 10)
 					this.tau--;
 				break;
 			case NUMPAD0:
@@ -186,6 +199,7 @@ public class UserInterface extends StackPane {
 				GraphicsContext g = this.canvas.getGraphicsContext2D();
 
 				long t2 = System.currentTimeMillis();
+				this.backgroundGen.render(g, snapshot.sizeX, snapshot.sizeY);
 				snapshot.render(g);
 
 				if (this.details) {

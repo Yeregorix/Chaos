@@ -20,48 +20,38 @@
  * SOFTWARE.
  */
 
-package net.smoofyuniverse.chaos;
+package net.smoofyuniverse.chaos.background;
 
-import javafx.scene.Scene;
-import javafx.scene.input.KeyCode;
-import net.smoofyuniverse.chaos.ui.UserInterface;
-import net.smoofyuniverse.common.app.App;
-import net.smoofyuniverse.common.app.Application;
-import net.smoofyuniverse.common.app.Arguments;
+import com.flowpowered.noise.NoiseQuality;
+import com.flowpowered.noise.module.source.Perlin;
+import javafx.scene.paint.Color;
 
-import java.util.concurrent.Executors;
+import java.util.Random;
+import java.util.logging.Logger;
 
-public class Chaos extends Application {
-	private UserInterface ui;
+public class SpaceGenerator extends CachedPixelGenerator {
+	private static final Logger logger = Logger.getLogger("SpaceGenerator");
+	public final Color color1, color2;
+	private final Random random = new Random();
+	private final Perlin perlin = new Perlin();
 
-	public Chaos(Arguments args) {
-		super(args, "Chaos", "1.0.2");
+	public SpaceGenerator(Color color1, Color color2) {
+		this.color1 = color1;
+		this.color2 = color2;
+
+		this.perlin.setSeed(this.random.nextInt());
+		this.perlin.setOctaveCount(6);
+		this.perlin.setFrequency(0.01d);
+		this.perlin.setLacunarity(2d);
+		this.perlin.setPersistence(0.6d);
+		this.perlin.setNoiseQuality(NoiseQuality.STANDARD);
 	}
 
 	@Override
-	public void init() {
-		requireUI();
-		initServices(Executors.newCachedThreadPool());
-
-		App.runLater(() -> {
-			initStage(900, 700, true, "favicon.png");
-
-			Scene scene = new Scene(this.ui = new UserInterface());
-			scene.setOnKeyPressed(e -> {
-				if (e.getCode() == KeyCode.F11)
-					getStage().get().setFullScreen(true);
-				else
-					this.ui.keyPressed(e.getCode());
-			});
-			setScene(scene).show();
-		});
-
-		checkForUpdate();
-
-		new Thread(this.ui::run).start();
-	}
-
-	public static void main(String[] args) {
-		new Chaos(Arguments.parse(args)).launch();
+	protected Color generate(int x, int y) {
+		double v = this.perlin.getValue(x, y, 0);
+		if (this.random.nextFloat() * 1500 < v)
+			return Color.gray(this.random.nextDouble());
+		return this.color1.interpolate(this.color2, (v - 1.1) * 0.5);
 	}
 }

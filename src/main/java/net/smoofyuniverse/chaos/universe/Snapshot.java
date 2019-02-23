@@ -23,7 +23,6 @@
 package net.smoofyuniverse.chaos.universe;
 
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.paint.Color;
 
 public final class Snapshot {
 	public final double sizeX, sizeY;
@@ -36,9 +35,6 @@ public final class Snapshot {
 	}
 
 	public void render(GraphicsContext g) {
-		g.setFill(Color.BLACK);
-		g.fillRect(0, 0, this.sizeX, this.sizeY);
-
 		for (Particle p : particles)
 			p.type.draw1(g, p);
 		for (Particle p : particles)

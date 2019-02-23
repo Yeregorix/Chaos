@@ -20,48 +20,21 @@
  * SOFTWARE.
  */
 
-package net.smoofyuniverse.chaos;
+package net.smoofyuniverse.chaos.background;
 
-import javafx.scene.Scene;
-import javafx.scene.input.KeyCode;
-import net.smoofyuniverse.chaos.ui.UserInterface;
-import net.smoofyuniverse.common.app.App;
-import net.smoofyuniverse.common.app.Application;
-import net.smoofyuniverse.common.app.Arguments;
+import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.paint.Color;
 
-import java.util.concurrent.Executors;
+public interface BackgroundGenerator {
 
-public class Chaos extends Application {
-	private UserInterface ui;
+	default void prepare(double sizeX, double sizeY) {}
 
-	public Chaos(Arguments args) {
-		super(args, "Chaos", "1.0.2");
-	}
+	void render(GraphicsContext g, double sizeX, double sizeY);
 
-	@Override
-	public void init() {
-		requireUI();
-		initServices(Executors.newCachedThreadPool());
-
-		App.runLater(() -> {
-			initStage(900, 700, true, "favicon.png");
-
-			Scene scene = new Scene(this.ui = new UserInterface());
-			scene.setOnKeyPressed(e -> {
-				if (e.getCode() == KeyCode.F11)
-					getStage().get().setFullScreen(true);
-				else
-					this.ui.keyPressed(e.getCode());
-			});
-			setScene(scene).show();
-		});
-
-		checkForUpdate();
-
-		new Thread(this.ui::run).start();
-	}
-
-	public static void main(String[] args) {
-		new Chaos(Arguments.parse(args)).launch();
+	static BackgroundGenerator ofColor(Color color) {
+		return (g, sizeX, sizeY) -> {
+			g.setFill(color);
+			g.fillRect(0, 0, sizeX, sizeY);
+		};
 	}
 }
