@@ -35,7 +35,7 @@ public class Chaos extends Application {
 	private UserInterface ui;
 
 	public Chaos(Arguments args) {
-		super(args, "Chaos", "1.0.3");
+		super(args, "Chaos", "1.0.4");
 	}
 
 	@Override
