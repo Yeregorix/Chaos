@@ -57,8 +57,7 @@ public class UserInterface extends StackPane {
 
 	private final Canvas canvas = new Canvas();
 	private final Label help = new Label("Controls:\nH: Display or hide this help.\nSpace: Pause the universe.\nD: Show details.\nR: Regenerate the universe.\nO: Open options." +
-			"\nAdd: Increase minimum tick duration.\nSubstract: Decrease minimum tick duration.\n1 to 9: Force n ticks to process.\n0: Clear remaining forced ticks." +
-			"\nF11: Fullscreen.");
+			"\nAdd: Increase minimum tick duration.\nSubstract: Decrease minimum tick duration.\n1 to 9: Force n ticks to process.\n0: Clear remaining forced ticks.\nF11: Fullscreen.");
 
 	private final ExecutorService executor = Executors.newFixedThreadPool(4);
 	private final Universe universe = new Universe(this.executor, 12);
@@ -82,11 +81,11 @@ public class UserInterface extends StackPane {
 
 		this.canvas.widthProperty().addListener((v, oldV, newV) -> {
 			this.universe.setSizeX(newV.doubleValue());
-			prepareBackground();
+			resizeBackground();
 		});
 		this.canvas.heightProperty().addListener((v, oldV, newV) -> {
 			this.universe.setSizeY(newV.doubleValue());
-			prepareBackground();
+			resizeBackground();
 		});
 
 		this.canvas.setOnMousePressed(e -> this.universe.select(e.getX(), e.getY()));
@@ -104,11 +103,11 @@ public class UserInterface extends StackPane {
 		this.help.setTextFill(Color.WHITE);
 		this.help.setBackground(new Background(new BackgroundFill(Color.gray(0.2), new CornerRadii(8), new Insets(-10))));
 
-		getChildren().addAll(this.canvas, this.help);
+		getChildren().addAll(this.backgroundGen.getNode(), this.canvas, this.help);
 	}
 
-	private void prepareBackground() {
-		this.backgroundGen.prepare(this.universe.getSizeX(), this.universe.getSizeY());
+	private void resizeBackground() {
+		this.backgroundGen.resize(this.universe.getSizeX(), this.universe.getSizeY());
 	}
 
 	public void keyPressed(KeyCode code) {
@@ -135,7 +134,7 @@ public class UserInterface extends StackPane {
 					this.tau++;
 				break;
 			case SUBTRACT:
-				if (this.tau > 10)
+				if (this.tau > 1)
 					this.tau--;
 				break;
 			case NUMPAD0:
@@ -200,7 +199,7 @@ public class UserInterface extends StackPane {
 				GraphicsContext g = this.canvas.getGraphicsContext2D();
 
 				long t2 = System.currentTimeMillis();
-				this.backgroundGen.render(g, snapshot.sizeX, snapshot.sizeY);
+				g.clearRect(0, 0, snapshot.sizeX, snapshot.sizeY);
 				snapshot.render(g);
 
 				if (this.details) {

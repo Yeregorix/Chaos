@@ -22,15 +22,17 @@
 
 package net.smoofyuniverse.chaos.background;
 
-import javafx.scene.canvas.GraphicsContext;
+import javafx.application.Platform;
 import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.image.PixelWriter;
 import javafx.scene.image.WritableImage;
 import javafx.scene.paint.Color;
 import net.smoofyuniverse.common.app.App;
 
-public abstract class CachedPixelGenerator implements BackgroundGenerator {
-	private final Object cacheLock = new Object();
+public abstract class CachedImageGenerator implements BackgroundGenerator {
+	private final ImageView imageView = new ImageView();
+
 	private Image cachedImage;
 	private int cachedSizeX, cachedSizeY;
 
@@ -38,7 +40,7 @@ public abstract class CachedPixelGenerator implements BackgroundGenerator {
 	private int newSizeX, newSizeY;
 
 	@Override
-	public void prepare(double sizeX, double sizeY) {
+	public void resize(double sizeX, double sizeY) {
 		int x = (int) Math.ceil(sizeX), y = (int) Math.ceil(sizeY);
 
 		if (x > this.cachedSizeX && x > this.newSizeX)
@@ -82,11 +84,10 @@ public abstract class CachedPixelGenerator implements BackgroundGenerator {
 				}
 			}
 
-			synchronized (this.cacheLock) {
-				this.cachedImage = newImage;
-				this.cachedSizeX = sizeX;
-				this.cachedSizeY = sizeY;
-			}
+			this.cachedImage = newImage;
+			this.cachedSizeX = sizeX;
+			this.cachedSizeY = sizeY;
+			Platform.runLater(() -> this.imageView.setImage(newImage));
 		}
 
 		this.updating = false;
@@ -95,9 +96,7 @@ public abstract class CachedPixelGenerator implements BackgroundGenerator {
 	protected abstract Color generate(int x, int y);
 
 	@Override
-	public void render(GraphicsContext g, double sizeX, double sizeY) {
-		synchronized (this.cacheLock) {
-			g.drawImage(this.cachedImage, 0, 0);
-		}
+	public ImageView getNode() {
+		return this.imageView;
 	}
 }

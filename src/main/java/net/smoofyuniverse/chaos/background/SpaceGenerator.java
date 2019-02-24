@@ -29,7 +29,7 @@ import javafx.scene.paint.Color;
 import java.util.Random;
 import java.util.logging.Logger;
 
-public class SpaceGenerator extends CachedPixelGenerator {
+public class SpaceGenerator extends CachedImageGenerator {
 	private static final Logger logger = Logger.getLogger("SpaceGenerator");
 	public final Color color1, color2;
 	private final Random random = new Random();

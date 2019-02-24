@@ -22,19 +22,11 @@
 
 package net.smoofyuniverse.chaos.background;
 
-import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.paint.Color;
+import javafx.scene.Node;
 
 public interface BackgroundGenerator {
 
-	default void prepare(double sizeX, double sizeY) {}
+	void resize(double sizeX, double sizeY);
 
-	void render(GraphicsContext g, double sizeX, double sizeY);
-
-	static BackgroundGenerator ofColor(Color color) {
-		return (g, sizeX, sizeY) -> {
-			g.setFill(color);
-			g.fillRect(0, 0, sizeX, sizeY);
-		};
-	}
+	Node getNode();
 }
