@@ -100,8 +100,9 @@ public class UserInterface extends StackPane {
 				getChildren().remove(this.help);
 		});
 
+		this.help.setStyle("-fx-font-size: 15;");
 		this.help.setTextFill(Color.WHITE);
-		this.help.setBackground(new Background(new BackgroundFill(Color.DARKGRAY, new CornerRadii(8), new Insets(-10))));
+		this.help.setBackground(new Background(new BackgroundFill(Color.gray(0.2), new CornerRadii(8), new Insets(-10))));
 
 		getChildren().addAll(this.canvas, this.help);
 	}
