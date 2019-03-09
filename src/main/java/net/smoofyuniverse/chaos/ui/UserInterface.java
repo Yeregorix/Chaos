@@ -39,6 +39,7 @@ import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import net.smoofyuniverse.chaos.background.BackgroundGenerator;
 import net.smoofyuniverse.chaos.background.SpaceGenerator;
+import net.smoofyuniverse.chaos.universe.Particle;
 import net.smoofyuniverse.chaos.universe.Snapshot;
 import net.smoofyuniverse.chaos.universe.Universe;
 import net.smoofyuniverse.common.app.App;
@@ -204,12 +205,21 @@ public class UserInterface extends StackPane {
 
 				if (this.details) {
 					g.setFill(details_background);
-					g.fillRect(5, 5, 100, 68);
+					g.fillRect(5, 5, 120, 83);
 					g.setFill(Color.WHITE);
 					g.fillText("Particles: " + snapshot.particles.length, 10, 20);
 					g.fillText("Render: " + f(System.currentTimeMillis() - t2) + " ms", 10, 35);
 					g.fillText("Tick: " + f(dt) + " / " + f(this.tau) + " ms", 10, 50);
 					g.fillText("Age: " + this.age, 10, 65);
+
+					double u = 0;
+					if (snapshot.particles.length != 0) {
+						for (Particle p : snapshot.particles)
+							u += p.speedX * p.speedX + p.speedY * p.speedY;
+						u /= (double) snapshot.particles.length;
+					}
+
+					g.fillText("Temperature: " + ((int) (u * 50)) + " K", 10, 80);
 				}
 			});
 
