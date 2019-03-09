@@ -35,14 +35,15 @@ public class TypeA implements ColoredType {
 	public final Color color;
 	public final double radius, friction;
 	public final double attractionFactor, attractionRadius, repulsionFactor, repulsionRadius;
+	public final double receptionAngle, emissionAngle;
 	public final boolean flatAttraction;
 	public final Universe universe;
 
 	// Cached values
-	private final double attractionRadius2, mRadius, dRadius;
+	private final double attractionRadius2, mRadius, dRadius, receptionCos, receptionSin, emissionCos, emissionSin;
 	private final Color attractionColor, repulsionColor;
 
-	public TypeA(Universe universe, Color color, double radius, double friction, double attractionFactor, double attractionRadius, double repulsionFactor, double repulsionRadius, boolean flatAttraction) {
+	public TypeA(Universe universe, Color color, double radius, double friction, double attractionFactor, double attractionRadius, double repulsionFactor, double repulsionRadius, double receptionAngle, double emissionAngle, boolean flatAttraction) {
 		if (universe == null)
 			throw new IllegalArgumentException("universe");
 		if (color == null)
@@ -69,12 +70,18 @@ public class TypeA implements ColoredType {
 		this.repulsionFactor = repulsionFactor;
 		this.repulsionRadius = repulsionRadius;
 		this.flatAttraction = flatAttraction;
+		this.receptionAngle = receptionAngle;
+		this.emissionAngle = emissionAngle;
 
 		this.repulsionColor = Color.color(color.getRed(), color.getGreen(), color.getBlue(), 0.2);
 		this.attractionColor = Color.color(color.getRed(), color.getGreen(), color.getBlue(), 0.05);
 		this.attractionRadius2 = attractionRadius * attractionRadius;
 		this.mRadius = (attractionRadius + repulsionRadius) / 2D;
 		this.dRadius = attractionRadius - repulsionRadius;
+		this.receptionCos = Math.cos(receptionAngle);
+		this.receptionSin = Math.sin(receptionAngle);
+		this.emissionCos = Math.cos(emissionAngle);
+		this.emissionSin = Math.sin(emissionAngle);
 	}
 
 	@Override
@@ -137,16 +144,22 @@ public class TypeA implements ColoredType {
 			f = this.repulsionFactor * this.repulsionRadius * (1D / (this.repulsionRadius + 2) - 1D / (d + 2));
 		}
 
-		receiver.accelerationX += dx * f;
-		receiver.accelerationY += dy * f;
+		receiver.forceX += (this.emissionCos * dx - this.emissionSin * dy) * f;
+		receiver.forceY += (this.emissionSin * dx + this.emissionCos * dy) * f;
 	}
 
 	@Override
 	public void tickStandalone(Particle p, boolean selected) {
 		if (selected) {
+			p.accelerationX = 0;
+			p.accelerationY = 0;
+
 			p.speedX = 0;
 			p.speedY = 0;
 		} else {
+			p.accelerationX = this.receptionCos * p.forceX - this.receptionSin * p.forceY;
+			p.accelerationY = this.receptionSin * p.forceX + this.receptionCos * p.forceY;
+
 			p.speedX = p.speedX * (1 - this.friction) + p.accelerationX;
 			p.speedY = p.speedY * (1 - this.friction) + p.accelerationY;
 

@@ -41,5 +41,5 @@ public interface IParticle {
 
 	long getTicks();
 
-	Type geType();
+	Type getType();
 }

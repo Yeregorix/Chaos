@@ -203,8 +203,8 @@ public final class Universe {
 			validatePositionX(m);
 			validatePositionY(m);
 
-			m.accelerationX = 0;
-			m.accelerationY = 0;
+			m.forceX = 0;
+			m.forceY = 0;
 		}, size);
 
 		this.particles.removeIf(p -> {
@@ -342,7 +342,7 @@ public final class Universe {
 		}
 
 		@Override
-		public Type geType() {
+		public Type getType() {
 			return this.type;
 		}
 	}

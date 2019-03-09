@@ -25,6 +25,7 @@ package net.smoofyuniverse.chaos.universe;
 import net.smoofyuniverse.chaos.type.Type;
 
 public final class Particle implements IParticle {
+	public double forceX, forceY;
 	public double accelerationX, accelerationY;
 	public double speedX, speedY;
 	public double positionX, positionY;
@@ -87,7 +88,7 @@ public final class Particle implements IParticle {
 	}
 
 	@Override
-	public Type geType() {
+	public Type getType() {
 		return this.type;
 	}
 }

@@ -40,12 +40,13 @@ public class TypeABuilder implements ColoredTypeBuilder<TypeA> {
 	public final ObjectProperty<Color> color = new SimpleObjectProperty<>();
 	public final DoubleField radius = new DoubleField(0, 100, 5), friction = new DoubleField(0, 1, 0.1),
 			attractionFactor = new DoubleField(-50, 50, 0.1), attractionRadius = new DoubleField(0, 500, 10),
-			repulsionFactor = new DoubleField(-50, 50, 1), repulsionRadius = new DoubleField(0, 500, 7);
+			repulsionFactor = new DoubleField(-50, 50, 1), repulsionRadius = new DoubleField(0, 500, 7),
+			receptionAngleDeg = new DoubleField(-360, 360, 0), emissionAngleDeg = new DoubleField(-360, 360, 0);
 	public final CheckBox flatAttraction = new CheckBox();
 
 	private GridPane pane = new GridPane();
 
-	public TypeABuilder(Color color, double radius, double friction, double attractionFactor, double attractionRadius, double repulsionFactor, double repulsionRadius, boolean flatAttraction) {
+	public TypeABuilder(Color color, double radius, double friction, double attractionFactor, double attractionRadius, double repulsionFactor, double repulsionRadius, double receptionAngleDeg, double emissionAngleDeg, boolean flatAttraction) {
 		this();
 
 		this.color.set(color);
@@ -55,6 +56,8 @@ public class TypeABuilder implements ColoredTypeBuilder<TypeA> {
 		this.attractionRadius.setValue(attractionRadius);
 		this.repulsionFactor.setValue(repulsionFactor);
 		this.repulsionRadius.setValue(repulsionRadius);
+		this.receptionAngleDeg.setValue(receptionAngleDeg);
+		this.emissionAngleDeg.setValue(emissionAngleDeg);
 		this.flatAttraction.setSelected(flatAttraction);
 	}
 
@@ -65,6 +68,8 @@ public class TypeABuilder implements ColoredTypeBuilder<TypeA> {
 		this.attractionRadius.setMaxWidth(Double.MAX_VALUE);
 		this.repulsionFactor.setMaxWidth(Double.MAX_VALUE);
 		this.repulsionRadius.setMaxWidth(Double.MAX_VALUE);
+		this.receptionAngleDeg.setMaxWidth(Double.MAX_VALUE);
+		this.emissionAngleDeg.setMaxWidth(Double.MAX_VALUE);
 
 		this.pane.add(new Label("Radius:"), 0, 0);
 		this.pane.add(this.radius, 1, 0);
@@ -81,8 +86,13 @@ public class TypeABuilder implements ColoredTypeBuilder<TypeA> {
 		this.pane.add(new Label("Repulsion radius:"), 2, 2);
 		this.pane.add(this.repulsionRadius, 3, 2);
 
-		this.pane.add(new Label("Flat attraction:"), 0, 3);
-		this.pane.add(this.flatAttraction, 1, 3);
+		this.pane.add(new Label("Reception angle:"), 0, 3);
+		this.pane.add(this.receptionAngleDeg, 1, 3);
+		this.pane.add(new Label("Emission angle:"), 2, 3);
+		this.pane.add(this.emissionAngleDeg, 3, 3);
+
+		this.pane.add(new Label("Flat attraction:"), 0, 4);
+		this.pane.add(this.flatAttraction, 1, 4);
 
 		this.pane.setHgap(5);
 		this.pane.setVgap(5);
@@ -102,6 +112,7 @@ public class TypeABuilder implements ColoredTypeBuilder<TypeA> {
 					this.radius.getValue(), this.friction.getValue(),
 					this.attractionFactor.getValue(), this.attractionRadius.getValue(),
 					this.repulsionFactor.getValue(), this.repulsionRadius.getValue(),
+					this.receptionAngleDeg.getValue() / 180.0 * Math.PI, this.emissionAngleDeg.getValue() / 180.0 * Math.PI,
 					this.flatAttraction.isSelected()));
 		} catch (Exception e) {
 			return Optional.empty();

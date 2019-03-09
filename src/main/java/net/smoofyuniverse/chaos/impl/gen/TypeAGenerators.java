@@ -77,7 +77,7 @@ public class TypeAGenerators {
 
 		@Override
 		public TypeABuilder generate(Random random) {
-			return new TypeABuilder(Color.WHITE, 8, 0.005, 1.4, 43, 10, 40, false);
+			return new TypeABuilder(Color.WHITE, 8, 0.005, 1.4, 43, 10, 40, 0, 0, false);
 		}
 	};
 
