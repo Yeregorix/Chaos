@@ -55,8 +55,6 @@ public class GenerationPanel extends GridPane {
 	private int ct;
 
 	public GenerationPanel() {
-		defaultConfig();
-
 		Button assignColors = new Button("Assign colors"), clear = new Button("Clear");
 		ChoiceBox<TypeGenerator<?>> generator = new ChoiceBox<>();
 		Button addOne = new Button("Add one"), addMany = new Button("Add many");
@@ -93,7 +91,6 @@ public class GenerationPanel extends GridPane {
 
 		generator.getItems().addAll(TypeAGenerators.DEFAULT, TypeAGenerators.WANDERER);
 		generator.getItems().addAll(TypeAGenerators.RANDOMS);
-		generator.getSelectionModel().select(0);
 
 		addOne.setOnAction(e -> {
 			TypeGenerator<?> gen = generator.getSelectionModel().getSelectedItem();
@@ -171,10 +168,12 @@ public class GenerationPanel extends GridPane {
 
 		getColumnConstraints().addAll(GridUtil.createColumn(18), GridUtil.createColumn(18), GridUtil.createColumn(28), GridUtil.createColumn(18), GridUtil.createColumn(18));
 		getRowConstraints().addAll(GridUtil.createRow(Priority.ALWAYS), GridUtil.createRow(), GridUtil.createRow(), GridUtil.createRow());
-	}
 
-	private void defaultConfig() {
-		TypeAGenerator gen = TypeAGenerators.RANDOMS.get(this.optionsRandom.nextInt(TypeAGenerators.RANDOMS.size()));
+		// Default config
+		int index = this.optionsRandom.nextInt(TypeAGenerators.RANDOMS.size());
+		generator.getSelectionModel().select(2 + index);
+
+		TypeAGenerator gen = TypeAGenerators.RANDOMS.get(index);
 		int c = gen.recommendedTypes();
 		int d = (160 / c) * 10;
 		for (int i = 0; i < c; i++) {
