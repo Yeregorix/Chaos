@@ -219,7 +219,7 @@ public class UserInterface extends StackPane {
 						u /= (double) snapshot.particles.length;
 					}
 
-					g.fillText("Temperature: " + ((int) (u * 50)) + " K", 10, 80);
+					g.fillText("Temperature: " + ((int) (u * 500)) / 10D + " K", 10, 80);
 				}
 			});
 
