@@ -26,6 +26,7 @@ import javafx.application.Platform;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
@@ -51,7 +52,6 @@ import java.util.concurrent.Executors;
 
 public class UserInterface extends StackPane {
 	private static final Logger logger = App.getLogger("UserInterface");
-	private static final Color details_background = Color.color(0, 0, 0, 0.5);
 
 	private final GenerationPanel generationPanel = new GenerationPanel();
 	private final Stage stage2 = new Stage();
@@ -59,13 +59,14 @@ public class UserInterface extends StackPane {
 	private final Canvas canvas = new Canvas();
 	private final Label help = new Label("Controls:\nH: Display or hide this help.\nSpace: Pause the universe.\nD: Show details.\nR: Regenerate the universe.\nO: Open options." +
 			"\nAdd: Increase minimum tick duration.\nSubstract: Decrease minimum tick duration.\n1 to 9: Force n ticks to process.\n0: Clear remaining forced ticks.\nF11: Fullscreen.");
+	private final Label details = new Label();
 
 	private final ExecutorService executor = Executors.newFixedThreadPool(4);
 	private final Universe universe = new Universe(this.executor, 12);
 	private final BackgroundGenerator backgroundGen = new SpaceGenerator(Color.BLACK, Color.BLUE);
 
-	private BooleanProperty showHelp = new SimpleBooleanProperty(true);
-	private boolean pause = true, generate = true, details = false;
+	private BooleanProperty showHelp = new SimpleBooleanProperty(true), showDetails = new SimpleBooleanProperty(false);
+	private boolean pause = true, generate = true;
 	private int forcedTicks = 0;
 	private long age, tau = 25;
 
@@ -89,9 +90,9 @@ public class UserInterface extends StackPane {
 			resizeBackground();
 		});
 
-		this.canvas.setOnMousePressed(e -> this.universe.select(e.getX(), e.getY()));
-		this.canvas.setOnMouseReleased(e -> this.universe.deselect());
-		this.canvas.setOnMouseDragged(e -> this.universe.moveSelection(e.getX(), e.getY()));
+		setOnMousePressed(e -> this.universe.select(e.getX(), e.getY()));
+		setOnMouseReleased(e -> this.universe.deselect());
+		setOnMouseDragged(e -> this.universe.moveSelection(e.getX(), e.getY()));
 
 		this.showHelp.addListener((v, oldV, newV) -> {
 			if (newV)
@@ -102,7 +103,19 @@ public class UserInterface extends StackPane {
 
 		this.help.setStyle("-fx-font-size: 15;");
 		this.help.setTextFill(Color.WHITE);
-		this.help.setBackground(new Background(new BackgroundFill(Color.gray(0.2), new CornerRadii(8), new Insets(-10))));
+		this.help.setBackground(new Background(new BackgroundFill(Color.gray(0.05, 0.8), new CornerRadii(15), new Insets(-10))));
+
+		this.showDetails.addListener((v, oldV, newV) -> {
+			if (newV)
+				getChildren().add(this.details);
+			else
+				getChildren().remove(this.details);
+		});
+
+		this.details.setTextFill(Color.WHITE);
+		this.details.setBackground(new Background(new BackgroundFill(Color.gray(0.05, 0.8), new CornerRadii(10), new Insets(-7))));
+		StackPane.setAlignment(this.details, Pos.TOP_LEFT);
+		StackPane.setMargin(this.details, new Insets(10));
 
 		getChildren().addAll(this.backgroundGen.getNode(), this.canvas, this.help);
 	}
@@ -120,7 +133,7 @@ public class UserInterface extends StackPane {
 				this.pause = !this.pause;
 				break;
 			case D:
-				this.details = !this.details;
+				this.showDetails.set(!this.showDetails.get());
 				break;
 			case R:
 				this.generate = true;
@@ -203,15 +216,7 @@ public class UserInterface extends StackPane {
 				g.clearRect(0, 0, snapshot.sizeX, snapshot.sizeY);
 				snapshot.render(g);
 
-				if (this.details) {
-					g.setFill(details_background);
-					g.fillRect(5, 5, 120, 83);
-					g.setFill(Color.WHITE);
-					g.fillText("Particles: " + snapshot.particles.length, 10, 20);
-					g.fillText("Render: " + f(System.currentTimeMillis() - t2) + " ms", 10, 35);
-					g.fillText("Tick: " + f(dt) + " / " + f(this.tau) + " ms", 10, 50);
-					g.fillText("Age: " + this.age, 10, 65);
-
+				if (this.showDetails.get()) {
 					double u = 0;
 					if (snapshot.particles.length != 0) {
 						for (Particle p : snapshot.particles)
@@ -219,7 +224,11 @@ public class UserInterface extends StackPane {
 						u /= (double) snapshot.particles.length;
 					}
 
-					g.fillText("Temperature: " + ((int) (u * 500)) / 10D + " K", 10, 80);
+					this.details.setText("Particles: " + snapshot.particles.length
+							+ "\nRender: " + f(System.currentTimeMillis() - t2) + " ms"
+							+ "\nTick: " + f(dt) + " / " + f(this.tau) + " ms"
+							+ "\nAge: " + this.age
+							+ "\nTemperature: " + ((int) (u * 500)) / 10D + " K");
 				}
 			});
 
