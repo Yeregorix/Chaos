@@ -28,6 +28,7 @@ import net.smoofyuniverse.chaos.type.ColoredType;
 import net.smoofyuniverse.chaos.universe.IParticle;
 import net.smoofyuniverse.chaos.universe.Particle;
 import net.smoofyuniverse.chaos.universe.Universe;
+import net.smoofyuniverse.chaos.universe.Universe.UParticle;
 
 import java.util.Random;
 
@@ -100,7 +101,7 @@ public class TypeA implements ColoredType {
 	@Override
 	public void draw2(GraphicsContext g, IParticle p) {
 		g.setFill(this.color);
-		this.universe.fillCircle(g, p.getPositionX(), p.getPositionY(), this.radius);
+		this.universe.fillCircle(g, p.getPositionX(), p.getPositionY(), p.getRadius());
 	}
 
 	@Override
@@ -122,9 +123,13 @@ public class TypeA implements ColoredType {
 	}
 
 	@Override
-	public void applyInteractions(IParticle emitter, Particle receiver) {
-		double dx = this.universe.getDeltaX(receiver.positionX, emitter.getPositionX());
-		double dy = this.universe.getDeltaY(receiver.positionY, emitter.getPositionY());
+	public void applyInteractions(UParticle emitter, UParticle receiver) {
+		Particle r = receiver.mutable;
+		if (r.type == null)
+			return;
+
+		double dx = this.universe.getDeltaX(receiver.getPositionX(), emitter.getPositionX());
+		double dy = this.universe.getDeltaY(receiver.getPositionY(), emitter.getPositionY());
 		double d2 = dx * dx + dy * dy;
 
 		if (d2 > this.attractionRadius2 || d2 < 0.01D)
@@ -144,27 +149,31 @@ public class TypeA implements ColoredType {
 			f = this.repulsionFactor * this.repulsionRadius * (1D / (this.repulsionRadius + 2) - 1D / (d + 2));
 		}
 
-		receiver.forceX += (this.emissionCos * dx - this.emissionSin * dy) * f;
-		receiver.forceY += (this.emissionSin * dx + this.emissionCos * dy) * f;
+		r.forceX += (this.emissionCos * dx - this.emissionSin * dy) * f;
+		r.forceY += (this.emissionSin * dx + this.emissionCos * dy) * f;
 	}
 
 	@Override
-	public void tickStandalone(Particle p, boolean selected) {
-		if (selected) {
-			p.accelerationX = 0;
-			p.accelerationY = 0;
+	public void tickStandalone(UParticle p) {
+		Particle m = p.mutable;
+		if (m.type == null)
+			return;
 
-			p.speedX = 0;
-			p.speedY = 0;
+		if (p.isSelected()) {
+			m.accelerationX = 0;
+			m.accelerationY = 0;
+
+			m.speedX = 0;
+			m.speedY = 0;
 		} else {
-			p.accelerationX = this.receptionCos * p.forceX - this.receptionSin * p.forceY;
-			p.accelerationY = this.receptionSin * p.forceX + this.receptionCos * p.forceY;
+			m.accelerationX = this.receptionCos * m.forceX - this.receptionSin * m.forceY;
+			m.accelerationY = this.receptionSin * m.forceX + this.receptionCos * m.forceY;
 
-			p.speedX = p.speedX * (1 - this.friction) + p.accelerationX;
-			p.speedY = p.speedY * (1 - this.friction) + p.accelerationY;
+			m.speedX = m.speedX * (1 - this.friction) + m.accelerationX;
+			m.speedY = m.speedY * (1 - this.friction) + m.accelerationY;
 
-			p.positionX += p.speedX;
-			p.positionY += p.speedY;
+			m.positionX += m.speedX;
+			m.positionY += m.speedY;
 		}
 	}
 }

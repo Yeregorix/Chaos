@@ -144,13 +144,16 @@ public final class Universe {
 			}
 		}
 
-		if (sel != null) {
-			if (this.selection != null)
-				this.selection.selected = false;
+		if (sel != null)
+			select(sel);
+	}
 
-			sel.selected = true;
-			this.selection = sel;
-		}
+	public void select(UParticle p) {
+		if (this.selection != null)
+			this.selection.selected = false;
+
+		p.selected = true;
+		this.selection = p;
 	}
 
 	public void deselect() {
@@ -175,36 +178,28 @@ public final class Universe {
 
 		int size = this.particles.size();
 		forEach(i -> {
-			Particle m = this.particles.get(i).mutable;
-			if (m.type == null)
-				return;
+			UParticle r = this.particles.get(i);
 
 			for (int j = 0; j < size; j++) {
-				if (i == j)
-					continue;
-
-				UParticle e = this.particles.get(j);
-				e.type.applyInteractions(e, m);
-				if (m.type == null)
-					break;
+				if (i != j) {
+					UParticle e = this.particles.get(j);
+					e.type.applyInteractions(e, r);
+				}
 			}
 		}, size);
 
 		forEach(i -> {
 			UParticle p = this.particles.get(i);
-			Particle m = p.mutable;
-			if (m.type == null)
+			p.type.tickStandalone(p);
+
+			if (p.mutable.type == null)
 				return;
 
-			m.type.tickStandalone(m, p.selected);
-			if (m.type == null)
-				return;
+			validatePositionX(p.mutable);
+			validatePositionY(p.mutable);
 
-			validatePositionX(m);
-			validatePositionY(m);
-
-			m.forceX = 0;
-			m.forceY = 0;
+			p.mutable.forceX = 0;
+			p.mutable.forceY = 0;
 		}, size);
 
 		this.particles.removeIf(p -> {
@@ -274,22 +269,22 @@ public final class Universe {
 		void accept(double a, double b);
 	}
 
-	private static class UParticle implements IParticle {
+	public static class UParticle implements IParticle {
 		public final Particle mutable;
-		public double accelerationX, accelerationY;
-		public double speedX, speedY;
-		public double positionX, positionY;
-		public double radius;
-		public long ticks;
-		public Type type;
-		public boolean selected;
+		private double accelerationX, accelerationY;
+		private double speedX, speedY;
+		private double positionX, positionY;
+		private double radius;
+		private long ticks;
+		private Type type;
+		private boolean selected;
 
-		public UParticle(Particle mutable) {
+		private UParticle(Particle mutable) {
 			this.mutable = mutable;
 			save();
 		}
 
-		public void save() {
+		private void save() {
 			this.accelerationX = this.mutable.accelerationX;
 			this.accelerationY = this.mutable.accelerationY;
 			this.speedX = this.mutable.speedX;
@@ -344,6 +339,10 @@ public final class Universe {
 		@Override
 		public Type getType() {
 			return this.type;
+		}
+
+		public boolean isSelected() {
+			return this.selected;
 		}
 	}
 }

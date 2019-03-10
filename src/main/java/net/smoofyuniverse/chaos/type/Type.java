@@ -25,6 +25,7 @@ package net.smoofyuniverse.chaos.type;
 import javafx.scene.canvas.GraphicsContext;
 import net.smoofyuniverse.chaos.universe.IParticle;
 import net.smoofyuniverse.chaos.universe.Particle;
+import net.smoofyuniverse.chaos.universe.Universe.UParticle;
 
 import java.util.Random;
 
@@ -37,7 +38,7 @@ public interface Type {
 
 	Particle createRandom(Random random);
 
-	void applyInteractions(IParticle emitter, Particle receiver);
+	void applyInteractions(UParticle emitter, UParticle receiver);
 
-	void tickStandalone(Particle particle, boolean selected);
+	void tickStandalone(UParticle particle);
 }
