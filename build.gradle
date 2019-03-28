@@ -22,7 +22,7 @@ configurations.all {
 }
 
 dependencies {
-    compile 'net.smoofyuniverse:appcommon:1.0.0-SNAPSHOT'
+    compile 'net.smoofyuniverse:appcommon:1.0.1-SNAPSHOT'
     compile 'com.flowpowered:flow-noise:1.0.1-SNAPSHOT'
 }
 
