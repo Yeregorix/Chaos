@@ -31,7 +31,7 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
 import net.smoofyuniverse.chaos.type.builder.ColoredTypeBuilder;
 import net.smoofyuniverse.chaos.universe.Universe;
-import net.smoofyuniverse.common.fxui.field.DoubleField;
+import net.smoofyuniverse.common.fx.field.DoubleField;
 import net.smoofyuniverse.common.util.GridUtil;
 
 import java.util.Optional;

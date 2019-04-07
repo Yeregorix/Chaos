@@ -41,7 +41,7 @@ import net.smoofyuniverse.chaos.type.builder.ColoredTypeBuilder;
 import net.smoofyuniverse.chaos.type.builder.TypeBuilder;
 import net.smoofyuniverse.chaos.type.gen.TypeGenerator;
 import net.smoofyuniverse.chaos.universe.Universe;
-import net.smoofyuniverse.common.fxui.field.IntegerField;
+import net.smoofyuniverse.common.fx.field.IntegerField;
 import net.smoofyuniverse.common.util.GridUtil;
 
 import java.util.Random;
