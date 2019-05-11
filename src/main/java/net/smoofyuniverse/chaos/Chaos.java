@@ -28,6 +28,7 @@ import net.smoofyuniverse.chaos.ui.UserInterface;
 import net.smoofyuniverse.common.app.App;
 import net.smoofyuniverse.common.app.Application;
 import net.smoofyuniverse.common.app.Arguments;
+import net.smoofyuniverse.common.environment.source.GithubReleaseSource;
 
 import java.util.concurrent.Executors;
 
@@ -42,6 +43,7 @@ public class Chaos extends Application {
 	public void init() {
 		requireUI();
 		initServices(Executors.newCachedThreadPool());
+		updateEnvironment(new GithubReleaseSource("Yeregorix", "Chaos", null, "Chaos"));
 
 		App.runLater(() -> {
 			initStage(900, 700, true, "favicon.png");
@@ -55,8 +57,6 @@ public class Chaos extends Application {
 			});
 			setScene(scene).show();
 		});
-
-		checkForUpdate();
 
 		new Thread(this.ui::run).start();
 	}
