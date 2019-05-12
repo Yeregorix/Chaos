@@ -28,11 +28,14 @@ import net.smoofyuniverse.chaos.ui.UserInterface;
 import net.smoofyuniverse.common.app.App;
 import net.smoofyuniverse.common.app.Application;
 import net.smoofyuniverse.common.app.Arguments;
+import net.smoofyuniverse.common.environment.DependencyInfo;
 import net.smoofyuniverse.common.environment.source.GithubReleaseSource;
 
 import java.util.concurrent.Executors;
 
 public class Chaos extends Application {
+	public static final DependencyInfo FLOW_NOISE = new DependencyInfo("com.flowpowered:flow-noise:1.0.1-SNAPSHOT", "https://repo.spongepowered.org/maven/com/flowpowered/flow-noise/1.0.1-SNAPSHOT/flow-noise-1.0.1-20150609.030116-1.jar", 68228, "bfddff85287441521fb66ec22b59a463190966e1", "sha1");
+
 	private UserInterface ui;
 
 	public Chaos(Arguments args) {
@@ -44,6 +47,13 @@ public class Chaos extends Application {
 		requireUI();
 		initServices(Executors.newCachedThreadPool());
 		updateEnvironment(new GithubReleaseSource("Yeregorix", "Chaos", null, "Chaos"));
+		if (!this.devEnvironment) {
+			if (!updateDependencies(this.workingDir.resolve("libraries"), FLOW_NOISE)) {
+				shutdown();
+				return;
+			}
+			loadDependencies(FLOW_NOISE);
+		}
 
 		App.runLater(() -> {
 			initStage(900, 700, true, "favicon.png");

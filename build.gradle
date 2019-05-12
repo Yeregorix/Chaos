@@ -51,7 +51,7 @@ configurations {
 
 dependencies {
     shade 'net.smoofyuniverse:appcommon:1.0.2-SNAPSHOT'
-    shade 'com.flowpowered:flow-noise:1.0.1-SNAPSHOT'
+    compile 'com.flowpowered:flow-noise:1.0.1-SNAPSHOT'
 }
 
 jar {
