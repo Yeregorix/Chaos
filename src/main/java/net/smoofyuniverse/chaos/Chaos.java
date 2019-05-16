@@ -46,7 +46,7 @@ public class Chaos extends Application {
 	public void init() {
 		requireUI();
 		initServices(Executors.newCachedThreadPool());
-		updateEnvironment(new GithubReleaseSource("Yeregorix", "Chaos", null, "Chaos"));
+		updateApplication(new GithubReleaseSource("Yeregorix", "Chaos", null, "Chaos"));
 		if (!this.devEnvironment) {
 			if (!updateDependencies(this.workingDir.resolve("libraries"), FLOW_NOISE)) {
 				shutdown();
