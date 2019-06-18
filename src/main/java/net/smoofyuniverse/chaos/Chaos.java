@@ -39,14 +39,14 @@ public class Chaos extends Application {
 	private UserInterface ui;
 
 	public Chaos(Arguments args) {
-		super(args, "Chaos", "1.0.6");
+		super(args, "Chaos", "1.0.7");
 	}
 
 	@Override
 	public void init() {
 		requireUI();
 		initServices(Executors.newCachedThreadPool());
-		updateApplication(new GithubReleaseSource("Yeregorix", "Chaos", null, "Chaos"));
+		tryUpdateApplication(new GithubReleaseSource("Yeregorix", "Chaos", null, "Chaos"));
 		if (!this.devEnvironment) {
 			if (!updateDependencies(this.workingDir.resolve("libraries"), FLOW_NOISE)) {
 				shutdown();
