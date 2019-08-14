@@ -46,7 +46,7 @@ public class Chaos extends Application {
 	public void init() {
 		requireUI();
 		initServices(Executors.newCachedThreadPool());
-		tryUpdateApplication(new GithubReleaseSource("Yeregorix", "Chaos", null, "Chaos"));
+
 		if (!this.devEnvironment) {
 			if (!updateDependencies(this.workingDir.resolve("libraries"), FLOW_NOISE)) {
 				shutdown();
@@ -69,6 +69,8 @@ public class Chaos extends Application {
 		});
 
 		new Thread(this.ui::run).start();
+
+		tryUpdateApplication(new GithubReleaseSource("Yeregorix", "Chaos", null, "Chaos"));
 	}
 
 	public static void main(String[] args) {
