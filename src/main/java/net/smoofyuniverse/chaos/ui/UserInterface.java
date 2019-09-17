@@ -74,7 +74,6 @@ public class UserInterface extends StackPane {
 		this.stage2.setScene(new Scene(this.generationPanel));
 		this.stage2.setTitle(App.get().getTitle());
 		this.stage2.getIcons().addAll(App.get().getStage().get().getIcons());
-		this.stage2.setResizable(false);
 		this.stage2.setWidth(750);
 		this.stage2.setHeight(900);
 
@@ -221,7 +220,7 @@ public class UserInterface extends StackPane {
 					if (snapshot.particles.length != 0) {
 						for (Particle p : snapshot.particles)
 							u += p.speedX * p.speedX + p.speedY * p.speedY;
-						u /= (double) snapshot.particles.length;
+						u /= snapshot.particles.length;
 					}
 
 					this.details.setText("Particles: " + snapshot.particles.length

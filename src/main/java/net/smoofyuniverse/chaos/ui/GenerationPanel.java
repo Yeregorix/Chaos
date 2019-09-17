@@ -33,6 +33,8 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
+import javafx.stage.FileChooser;
+import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.util.StringConverter;
 import net.smoofyuniverse.chaos.impl.gen.TypeAGenerator;
 import net.smoofyuniverse.chaos.impl.gen.TypeAGenerators;
@@ -41,14 +43,29 @@ import net.smoofyuniverse.chaos.type.builder.ColoredTypeBuilder;
 import net.smoofyuniverse.chaos.type.builder.TypeBuilder;
 import net.smoofyuniverse.chaos.type.gen.TypeGenerator;
 import net.smoofyuniverse.chaos.universe.Universe;
+import net.smoofyuniverse.common.app.App;
 import net.smoofyuniverse.common.fx.field.IntegerField;
 import net.smoofyuniverse.common.util.GridUtil;
+import net.smoofyuniverse.logger.core.Logger;
 
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.function.Supplier;
 
 public class GenerationPanel extends GridPane {
+	public static final int CURRENT_VERSION = 1, MINIMUM_VERSION = 1;
+	private static final Logger logger = App.getLogger("GenerationPanel");
+
 	private final ListView<TypeObject> types = new ListView<>();
+	private final TextField seed1 = new TextField(), seed2 = new TextField();
 
 	private final Random optionsRandom = new Random();
 	private long genSeed;
@@ -58,20 +75,20 @@ public class GenerationPanel extends GridPane {
 		Button assignColors = new Button("Assign colors"), clear = new Button("Clear");
 		ChoiceBox<TypeGenerator<?>> generator = new ChoiceBox<>();
 		Button addOne = new Button("Add one"), addMany = new Button("Add many");
-
-		TextField seed1 = new TextField(), seed2 = new TextField();
 		Button rSeed1 = new Button("Random"), rSeed2 = new Button("Random");
+		Button open = new Button("Open"), save = new Button("Save");
 
 		assignColors.setMaxWidth(Double.MAX_VALUE);
 		clear.setMaxWidth(Double.MAX_VALUE);
 		generator.setMaxWidth(Double.MAX_VALUE);
 		addOne.setMaxWidth(Double.MAX_VALUE);
 		addMany.setMaxWidth(Double.MAX_VALUE);
-
-		seed1.setMaxWidth(Double.MAX_VALUE);
-		seed2.setMaxWidth(Double.MAX_VALUE);
+		this.seed1.setMaxWidth(Double.MAX_VALUE);
+		this.seed2.setMaxWidth(Double.MAX_VALUE);
 		rSeed1.setMaxWidth(Double.MAX_VALUE);
 		rSeed2.setMaxWidth(Double.MAX_VALUE);
+		open.setMaxWidth(Double.MAX_VALUE);
+		save.setMaxWidth(Double.MAX_VALUE);
 
 		this.types.setCellFactory(c -> new TypeCell());
 		assignColors.setOnAction(e -> assignColors());
@@ -120,7 +137,7 @@ public class GenerationPanel extends GridPane {
 			}
 		});
 
-		seed1.textProperty().addListener((v, oldV, newV) -> {
+		this.seed1.textProperty().addListener((v, oldV, newV) -> {
 			long l;
 			try {
 				l = Long.parseLong(newV);
@@ -130,7 +147,7 @@ public class GenerationPanel extends GridPane {
 			this.genSeed = l;
 		});
 
-		seed2.textProperty().addListener((v, oldV, newV) -> {
+		this.seed2.textProperty().addListener((v, oldV, newV) -> {
 			long l;
 			try {
 				l = Long.parseLong(newV);
@@ -140,11 +157,39 @@ public class GenerationPanel extends GridPane {
 			this.optionsRandom.setSeed(l);
 		});
 
-		rSeed1.setOnAction(e -> seed1.setText(randomSeed()));
-		rSeed2.setOnAction(e -> seed2.setText(randomSeed()));
+		rSeed1.setOnAction(e -> this.seed1.setText(randomSeed()));
+		rSeed2.setOnAction(e -> this.seed2.setText(randomSeed()));
 
-		seed1.setText(randomSeed());
-		seed2.setText(randomSeed());
+		this.seed1.setText(randomSeed());
+		this.seed2.setText(randomSeed());
+
+		FileChooser chooser = new FileChooser();
+		chooser.getExtensionFilters().add(new ExtensionFilter("Chaos Options", "*.cho"));
+
+		// TODO improve because it's ugly
+		open.setOnAction(e -> {
+			File f = chooser.showOpenDialog(App.get().getStage().orElse(null));
+			if (f != null) {
+				Path p = f.toPath();
+				try {
+					read(p);
+				} catch (IOException ex) {
+					logger.error("Failed to read options from " + p.getFileName(), ex);
+				}
+			}
+		});
+
+		save.setOnAction(e -> {
+			File f = chooser.showSaveDialog(App.get().getStage().orElse(null));
+			if (f != null) {
+				Path p = f.toPath();
+				try {
+					write(p);
+				} catch (IOException ex) {
+					logger.error("Failed to write options to " + p.getFileName(), ex);
+				}
+			}
+		});
 
 		add(this.types, 0, 0, 5, 1);
 
@@ -155,19 +200,22 @@ public class GenerationPanel extends GridPane {
 		add(addMany, 4, 1);
 
 		add(new Label("Generation seed:"), 0, 2);
-		add(seed1, 1, 2, 3, 1);
+		add(this.seed1, 1, 2, 3, 1);
 		add(rSeed1, 4, 2);
 
 		add(new Label("Options seed:"), 0, 3);
-		add(seed2, 1, 3, 3, 1);
+		add(this.seed2, 1, 3, 3, 1);
 		add(rSeed2, 4, 3);
+
+		add(open, 0, 4);
+		add(save, 1, 4);
 
 		setPadding(new Insets(5));
 		setVgap(5);
 		setHgap(5);
 
-		getColumnConstraints().addAll(GridUtil.createColumn(18), GridUtil.createColumn(18), GridUtil.createColumn(28), GridUtil.createColumn(18), GridUtil.createColumn(18));
-		getRowConstraints().addAll(GridUtil.createRow(Priority.ALWAYS), GridUtil.createRow(), GridUtil.createRow(), GridUtil.createRow());
+		getColumnConstraints().addAll(GridUtil.createColumn(17), GridUtil.createColumn(17), GridUtil.createColumn(32), GridUtil.createColumn(17), GridUtil.createColumn(17));
+		getRowConstraints().addAll(GridUtil.createRow(Priority.ALWAYS), GridUtil.createRow(), GridUtil.createRow(), GridUtil.createRow(), GridUtil.createRow());
 
 		// Default config
 		int index = this.optionsRandom.nextInt(TypeAGenerators.RANDOMS.size());
@@ -206,6 +254,62 @@ public class GenerationPanel extends GridPane {
 
 	private static String randomSeed() {
 		return Long.toString(ThreadLocalRandom.current().nextLong());
+	}
+
+	public void read(Path file) throws IOException {
+		try (DataInputStream in = new DataInputStream(Files.newInputStream(file))) {
+			read(in);
+		}
+	}
+
+	public void write(Path file) throws IOException {
+		try (DataOutputStream out = new DataOutputStream(Files.newOutputStream(file))) {
+			write(out);
+		}
+	}
+
+	public void read(DataInputStream in) throws IOException {
+		int version = in.readInt();
+		if (version > CURRENT_VERSION || version < MINIMUM_VERSION)
+			throw new IOException("Invalid format version: " + version);
+
+		String s1 = in.readUTF(), s2 = in.readUTF();
+
+		int size = in.readInt();
+		List<TypeObject> l = new ArrayList<>(size);
+		for (int i = 0; i < size; i++) {
+			String typeName = in.readUTF();
+			Supplier<TypeBuilder<?>> supplier = TypeBuilder.REGISTRY.get(typeName);
+			if (supplier == null) {
+				logger.warn("Skipping unknown type name " + typeName);
+				continue;
+			}
+
+			TypeObject obj = new TypeObject(supplier.get());
+			obj.builder.read(in);
+			obj.count.set(in.readInt());
+
+			l.add(obj);
+		}
+
+		this.seed1.setText(s1);
+		this.seed2.setText(s2);
+		this.types.getItems().setAll(l);
+	}
+
+	public void write(DataOutputStream out) throws IOException {
+		out.writeInt(CURRENT_VERSION);
+
+		out.writeUTF(this.seed1.getText());
+		out.writeUTF(this.seed2.getText());
+
+		List<TypeObject> l = this.types.getItems();
+		out.writeInt(l.size());
+		for (TypeObject t : l) {
+			out.writeUTF(t.builder.getTypeName());
+			t.builder.write(out);
+			out.writeInt(t.count.get());
+		}
 	}
 
 	public void generateParticles(Universe universe) {

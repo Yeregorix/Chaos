@@ -115,8 +115,8 @@ public class TypeA implements ColoredType {
 	@Override
 	public Particle createRandom(Random random) {
 		Particle p = createDefault();
-		p.positionX = random.nextDouble() * universe.getSizeX();
-		p.positionY = random.nextDouble() * universe.getSizeY();
+		p.positionX = random.nextDouble() * this.universe.getSizeX();
+		p.positionY = random.nextDouble() * this.universe.getSizeY();
 		p.speedX = random.nextGaussian() * 0.2D;
 		p.speedY = random.nextGaussian() * 0.2D;
 		return p;

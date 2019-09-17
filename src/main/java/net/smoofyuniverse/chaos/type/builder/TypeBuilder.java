@@ -26,13 +26,24 @@ import javafx.scene.Node;
 import net.smoofyuniverse.chaos.type.Type;
 import net.smoofyuniverse.chaos.universe.Universe;
 
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
+import java.util.function.Supplier;
 
 public interface TypeBuilder<T extends Type> {
+	Map<String, Supplier<TypeBuilder<?>>> REGISTRY = new HashMap<>();
 
 	String getTypeName();
 
 	Optional<T> build(Universe universe);
 
 	Node getNode();
+
+	void read(DataInputStream in) throws IOException;
+
+	void write(DataOutputStream out) throws IOException;
 }

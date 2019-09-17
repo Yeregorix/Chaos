@@ -34,9 +34,14 @@ import net.smoofyuniverse.chaos.universe.Universe;
 import net.smoofyuniverse.common.fx.field.DoubleField;
 import net.smoofyuniverse.common.util.GridUtil;
 
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
 import java.util.Optional;
 
 public class TypeABuilder implements ColoredTypeBuilder<TypeA> {
+	public static final int CURRENT_VERSION = 1, MINIMUM_VERSION = 1;
+
 	public final ObjectProperty<Color> color = new SimpleObjectProperty<>();
 	public final DoubleField radius = new DoubleField(0, 100, 5), friction = new DoubleField(0, 1, 0.1),
 			attractionFactor = new DoubleField(-50, 50, 0.1), attractionRadius = new DoubleField(0, 500, 10),
@@ -122,6 +127,46 @@ public class TypeABuilder implements ColoredTypeBuilder<TypeA> {
 	@Override
 	public Node getNode() {
 		return this.pane;
+	}
+
+	@Override
+	public void read(DataInputStream in) throws IOException {
+		int version = in.readInt();
+		if (version > CURRENT_VERSION || version < MINIMUM_VERSION)
+			throw new IOException("Invalid format version: " + version);
+
+		this.color.set(Color.color(in.readDouble(), in.readDouble(), in.readDouble(), in.readDouble()));
+
+		this.radius.setValue(in.readDouble());
+		this.friction.setValue(in.readDouble());
+		this.attractionFactor.setValue(in.readDouble());
+		this.attractionRadius.setValue(in.readDouble());
+		this.repulsionFactor.setValue(in.readDouble());
+		this.repulsionRadius.setValue(in.readDouble());
+		this.receptionAngleDeg.setValue(in.readDouble());
+		this.emissionAngleDeg.setValue(in.readDouble());
+		this.flatAttraction.setSelected(in.readBoolean());
+	}
+
+	@Override
+	public void write(DataOutputStream out) throws IOException {
+		out.writeInt(CURRENT_VERSION);
+
+		Color c = this.color.get();
+		out.writeDouble(c.getRed());
+		out.writeDouble(c.getGreen());
+		out.writeDouble(c.getBlue());
+		out.writeDouble(c.getOpacity());
+
+		out.writeDouble(this.radius.getValue());
+		out.writeDouble(this.friction.getValue());
+		out.writeDouble(this.attractionFactor.getValue());
+		out.writeDouble(this.attractionRadius.getValue());
+		out.writeDouble(this.repulsionFactor.getValue());
+		out.writeDouble(this.repulsionRadius.getValue());
+		out.writeDouble(this.receptionAngleDeg.getValue());
+		out.writeDouble(this.emissionAngleDeg.getValue());
+		out.writeBoolean(this.flatAttraction.isSelected());
 	}
 
 	@Override

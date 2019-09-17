@@ -24,6 +24,8 @@ package net.smoofyuniverse.chaos;
 
 import javafx.scene.Scene;
 import javafx.scene.input.KeyCode;
+import net.smoofyuniverse.chaos.impl.TypeABuilder;
+import net.smoofyuniverse.chaos.type.builder.TypeBuilder;
 import net.smoofyuniverse.chaos.ui.UserInterface;
 import net.smoofyuniverse.common.app.App;
 import net.smoofyuniverse.common.app.Application;
@@ -54,6 +56,8 @@ public class Chaos extends Application {
 			}
 			loadDependencies(FLOW_NOISE);
 		}
+
+		TypeBuilder.REGISTRY.put("A", TypeABuilder::new);
 
 		App.runLater(() -> {
 			initStage(900, 700, true, "favicon.png");
