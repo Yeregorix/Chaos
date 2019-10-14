@@ -58,7 +58,7 @@ public class UserInterface extends StackPane {
 
 	private final Canvas canvas = new Canvas();
 	private final Label help = new Label("Controls:\nH: Display or hide this help.\nSpace: Pause the universe.\nD: Show details.\nR: Regenerate the universe.\nO: Open options." +
-			"\nAdd: Increase minimum tick duration.\nSubstract: Decrease minimum tick duration.\n1 to 9: Force n ticks to process.\n0: Clear remaining forced ticks.\nF11: Fullscreen.");
+			"\nUp: Increase minimum tick duration.\nDown: Decrease minimum tick duration.\n1 to 9: Force n ticks to process.\n0: Clear remaining forced ticks.\nF11: Fullscreen.");
 	private final Label details = new Label();
 
 	private final ExecutorService executor = Executors.newFixedThreadPool(4);
@@ -142,41 +142,51 @@ public class UserInterface extends StackPane {
 				this.stage2.show();
 				this.stage2.requestFocus();
 				break;
-			case ADD:
+			case UP:
 				if (this.tau < 100)
 					this.tau++;
 				break;
-			case SUBTRACT:
+			case DOWN:
 				if (this.tau > 1)
 					this.tau--;
 				break;
+			case DIGIT0:
 			case NUMPAD0:
 				this.forcedTicks = 0;
 				break;
+			case DIGIT1:
 			case NUMPAD1:
 				this.forcedTicks += 1;
 				break;
+			case DIGIT2:
 			case NUMPAD2:
 				this.forcedTicks += 2;
 				break;
+			case DIGIT3:
 			case NUMPAD3:
 				this.forcedTicks += 3;
 				break;
+			case DIGIT4:
 			case NUMPAD4:
 				this.forcedTicks += 4;
 				break;
+			case DIGIT5:
 			case NUMPAD5:
 				this.forcedTicks += 5;
 				break;
+			case DIGIT6:
 			case NUMPAD6:
 				this.forcedTicks += 6;
 				break;
+			case DIGIT7:
 			case NUMPAD7:
 				this.forcedTicks += 7;
 				break;
+			case DIGIT8:
 			case NUMPAD8:
 				this.forcedTicks += 8;
 				break;
+			case DIGIT9:
 			case NUMPAD9:
 				this.forcedTicks += 9;
 				break;
