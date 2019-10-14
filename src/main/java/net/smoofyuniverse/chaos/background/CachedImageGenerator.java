@@ -68,7 +68,7 @@ public abstract class CachedImageGenerator implements BackgroundGenerator {
 	}
 
 	private void update() {
-		while (this.newSizeX != 0 || this.newSizeY != 0) {
+		while (this.newSizeX != 0 && this.newSizeY != 0) {
 			int sizeX = this.newSizeX, sizeY = this.newSizeY;
 			this.newSizeX = this.newSizeY = 0;
 
