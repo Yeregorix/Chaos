@@ -66,9 +66,8 @@ public class Chaos extends Application {
 			scene.setOnKeyPressed(e -> {
 				if (e.getCode() == KeyCode.F11)
 					getStage().get().setFullScreen(true);
-				else
-					this.ui.keyPressed(e.getCode());
 			});
+			scene.setOnKeyTyped(e -> this.ui.keyTyped(e.getCharacter().charAt(0)));
 			setScene(scene).show();
 		});
 

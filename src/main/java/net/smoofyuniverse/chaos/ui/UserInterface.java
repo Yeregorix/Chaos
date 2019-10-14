@@ -31,7 +31,6 @@ import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Label;
-import javafx.scene.input.KeyCode;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.CornerRadii;
@@ -58,7 +57,7 @@ public class UserInterface extends StackPane {
 
 	private final Canvas canvas = new Canvas();
 	private final Label help = new Label("Controls:\nH: Display or hide this help.\nSpace: Pause the universe.\nD: Show details.\nR: Regenerate the universe.\nO: Open options." +
-			"\nUp: Increase minimum tick duration.\nDown: Decrease minimum tick duration.\n1 to 9: Force n ticks to process.\n0: Clear remaining forced ticks.\nF11: Fullscreen.");
+			"\n+: Increase minimum tick duration.\n-: Decrease minimum tick duration.\n1 to 9: Force n ticks to process.\n0: Clear remaining forced ticks.\nF11: Fullscreen.");
 	private final Label details = new Label();
 
 	private final ExecutorService executor = Executors.newFixedThreadPool(4);
@@ -123,71 +122,61 @@ public class UserInterface extends StackPane {
 		this.backgroundGen.resize(this.universe.getSizeX(), this.universe.getSizeY());
 	}
 
-	public void keyPressed(KeyCode code) {
-		switch (code) {
-			case H:
+	public void keyTyped(char key) {
+		switch (Character.toUpperCase(key)) {
+			case 'H':
 				this.showHelp.set(!this.showHelp.get());
 				break;
-			case SPACE:
+			case ' ':
 				this.pause = !this.pause;
 				break;
-			case D:
+			case 'D':
 				this.showDetails.set(!this.showDetails.get());
 				break;
-			case R:
+			case 'R':
 				this.generate = true;
 				break;
-			case O:
+			case 'O':
 				App.get().getStage().get().setFullScreen(false);
 				this.stage2.show();
 				this.stage2.requestFocus();
 				break;
-			case UP:
+			case '+':
 				if (this.tau < 100)
 					this.tau++;
 				break;
-			case DOWN:
+			case '-':
 				if (this.tau > 1)
 					this.tau--;
 				break;
-			case DIGIT0:
-			case NUMPAD0:
+			case '0':
 				this.forcedTicks = 0;
 				break;
-			case DIGIT1:
-			case NUMPAD1:
+			case '1':
 				this.forcedTicks += 1;
 				break;
-			case DIGIT2:
-			case NUMPAD2:
+			case '2':
 				this.forcedTicks += 2;
 				break;
-			case DIGIT3:
-			case NUMPAD3:
+			case '3':
 				this.forcedTicks += 3;
 				break;
-			case DIGIT4:
-			case NUMPAD4:
+			case '4':
 				this.forcedTicks += 4;
 				break;
-			case DIGIT5:
-			case NUMPAD5:
+			case '5':
 				this.forcedTicks += 5;
 				break;
-			case DIGIT6:
-			case NUMPAD6:
+			case '6':
 				this.forcedTicks += 6;
 				break;
-			case DIGIT7:
-			case NUMPAD7:
+			case '7':
 				this.forcedTicks += 7;
 				break;
-			case DIGIT8:
-			case NUMPAD8:
+			case '8':
 				this.forcedTicks += 8;
 				break;
-			case DIGIT9:
-			case NUMPAD9:
+			case '9':
 				this.forcedTicks += 9;
 				break;
 		}
