@@ -81,11 +81,11 @@ public class UserInterface extends StackPane {
 		this.canvas.heightProperty().bind(heightProperty());
 
 		this.canvas.widthProperty().addListener((v, oldV, newV) -> {
-			this.universe.setSizeX(newV.doubleValue());
+			this.universe.setSizeX(Math.max(newV.doubleValue(), 1));
 			resizeBackground();
 		});
 		this.canvas.heightProperty().addListener((v, oldV, newV) -> {
-			this.universe.setSizeY(newV.doubleValue());
+			this.universe.setSizeY(Math.max(newV.doubleValue(), 1));
 			resizeBackground();
 		});
 

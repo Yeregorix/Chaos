@@ -60,7 +60,7 @@ public class Chaos extends Application {
 		TypeBuilder.REGISTRY.put("A", TypeABuilder::new);
 
 		App.runLater(() -> {
-			initStage(900, 700, true, "favicon.png");
+			initStage(900, 700, "favicon.png");
 
 			Scene scene = new Scene(this.ui = new UserInterface());
 			scene.setOnKeyPressed(e -> {
