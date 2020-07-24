@@ -338,7 +338,7 @@ public class GenerationPanel extends GridPane {
 		private final IntegerField count = new IntegerField(0, 3000);
 		private final ColorPicker colorPicker = new ColorPicker();
 		private final StackPane options = new StackPane();
-		private GridPane pane = new GridPane();
+		private final GridPane pane = new GridPane();
 		private IntegerProperty curCount;
 		private ObjectProperty<Color> curColor;
 

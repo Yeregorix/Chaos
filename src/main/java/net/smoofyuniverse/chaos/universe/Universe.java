@@ -32,11 +32,11 @@ import java.util.concurrent.Executor;
 import java.util.function.IntConsumer;
 
 public final class Universe {
-	private List<UParticle> particles = new ArrayList<>();
-	private double sizeX, sizeY, halfX, halfY;
-	private Executor executor;
-	private int chunks;
+	private final List<UParticle> particles = new ArrayList<>();
+	private final Executor executor;
+	private final int chunks;
 
+	private double sizeX, sizeY, halfX, halfY;
 	private UParticle selection;
 
 	public Universe(Executor executor, int chunks) {

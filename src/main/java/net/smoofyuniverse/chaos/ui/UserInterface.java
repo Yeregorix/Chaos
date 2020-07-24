@@ -64,7 +64,7 @@ public class UserInterface extends StackPane {
 	private final Universe universe = new Universe(this.executor, 12);
 	private final BackgroundGenerator backgroundGen = new SpaceGenerator(Color.BLACK, Color.BLUE);
 
-	private BooleanProperty showHelp = new SimpleBooleanProperty(true), showDetails = new SimpleBooleanProperty(false);
+	private final BooleanProperty showHelp = new SimpleBooleanProperty(true), showDetails = new SimpleBooleanProperty(false);
 	private boolean pause = true, generate = true;
 	private int forcedTicks = 0;
 	private long age, tau = 25;

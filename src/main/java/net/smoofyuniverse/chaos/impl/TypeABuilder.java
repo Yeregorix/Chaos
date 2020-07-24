@@ -49,7 +49,7 @@ public class TypeABuilder implements ColoredTypeBuilder<TypeA> {
 			receptionAngleDeg = new DoubleField(-360, 360, 0), emissionAngleDeg = new DoubleField(-360, 360, 0);
 	public final CheckBox flatAttraction = new CheckBox();
 
-	private GridPane pane = new GridPane();
+	private final GridPane pane = new GridPane();
 
 	public TypeABuilder(Color color, double radius, double friction, double attractionFactor, double attractionRadius, double repulsionFactor, double repulsionRadius, double receptionAngleDeg, double emissionAngleDeg, boolean flatAttraction) {
 		this();
