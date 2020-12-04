@@ -25,7 +25,7 @@ plugins {
 }
 
 group 'net.smoofyuniverse'
-version = '1.0.9'
+version = '1.0.10'
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
@@ -53,7 +53,7 @@ configurations {
 }
 
 dependencies {
-    shade 'net.smoofyuniverse:appcommon:1.0.4-SNAPSHOT'
+    shade 'net.smoofyuniverse:appcommon:1.1.0-SNAPSHOT'
     compile 'com.flowpowered:flow-noise:1.0.1-SNAPSHOT'
 }
 
