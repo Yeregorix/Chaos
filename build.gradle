@@ -65,7 +65,10 @@ jar {
     }
 
     manifest {
-        attributes('Main-Class': 'net.smoofyuniverse.common.Main')
+        attributes(
+                'Main-Class': 'net.smoofyuniverse.common.Main',
+                'Launcher-Agent-Class': 'net.smoofyuniverse.common.Main'
+        )
     }
 }
 
