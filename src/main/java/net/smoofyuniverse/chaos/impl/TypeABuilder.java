@@ -76,28 +76,11 @@ public class TypeABuilder implements ColoredTypeBuilder<TypeA> {
 		this.receptionAngleDeg.setMaxWidth(Double.MAX_VALUE);
 		this.emissionAngleDeg.setMaxWidth(Double.MAX_VALUE);
 
-		this.pane.add(new Label("Radius:"), 0, 0);
-		this.pane.add(this.radius, 1, 0);
-		this.pane.add(new Label("Friction:"), 2, 0);
-		this.pane.add(this.friction, 3, 0);
-
-		this.pane.add(new Label("Attraction factor:"), 0, 1);
-		this.pane.add(this.attractionFactor, 1, 1);
-		this.pane.add(new Label("Attraction radius:"), 2, 1);
-		this.pane.add(this.attractionRadius, 3, 1);
-
-		this.pane.add(new Label("Repulsion factor:"), 0, 2);
-		this.pane.add(this.repulsionFactor, 1, 2);
-		this.pane.add(new Label("Repulsion radius:"), 2, 2);
-		this.pane.add(this.repulsionRadius, 3, 2);
-
-		this.pane.add(new Label("Reception angle:"), 0, 3);
-		this.pane.add(this.receptionAngleDeg, 1, 3);
-		this.pane.add(new Label("Emission angle:"), 2, 3);
-		this.pane.add(this.emissionAngleDeg, 3, 3);
-
-		this.pane.add(new Label("Flat attraction:"), 0, 4);
-		this.pane.add(this.flatAttraction, 1, 4);
+		this.pane.addRow(0, new Label("Radius:"), this.radius, new Label("Friction:"), this.friction);
+		this.pane.addRow(1, new Label("Attraction factor:"), this.attractionFactor, new Label("Attraction radius:"), this.attractionRadius);
+		this.pane.addRow(2, new Label("Repulsion factor:"), this.repulsionFactor, new Label("Repulsion radius:"), this.repulsionRadius);
+		this.pane.addRow(3, new Label("Reception angle:"), this.receptionAngleDeg, new Label("Emission angle:"), this.emissionAngleDeg);
+		this.pane.addRow(4, new Label("Flat attraction:"), this.flatAttraction);
 
 		this.pane.setHgap(5);
 		this.pane.setVgap(5);

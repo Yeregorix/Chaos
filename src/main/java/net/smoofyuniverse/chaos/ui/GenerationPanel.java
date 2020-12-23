@@ -27,7 +27,6 @@ import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
-import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
@@ -193,11 +192,7 @@ public class GenerationPanel extends GridPane {
 
 		add(this.types, 0, 0, 5, 1);
 
-		add(assignColors, 0, 1);
-		add(clear, 1, 1);
-		add(generator, 2, 1);
-		add(addOne, 3, 1);
-		add(addMany, 4, 1);
+		addRow(1, assignColors, clear, generator, addOne, addMany);
 
 		add(new Label("Generation seed:"), 0, 2);
 		add(this.seed1, 1, 2, 3, 1);
@@ -354,10 +349,7 @@ public class GenerationPanel extends GridPane {
 			this.colorPicker.setMaxWidth(Double.MAX_VALUE);
 			remove.setMaxWidth(Double.MAX_VALUE);
 
-			this.pane.add(this.typeName, 0, 0);
-			this.pane.add(this.count, 1, 0);
-			this.pane.add(this.colorPicker, 2, 0);
-			this.pane.add(remove, 3, 0);
+			this.pane.addRow(0, this.typeName, this.count, this.colorPicker, remove);
 			this.pane.add(this.options, 0, 1, 4, 1);
 
 			this.pane.setVgap(5);
@@ -368,44 +360,36 @@ public class GenerationPanel extends GridPane {
 		}
 
 		@Override
-		public void updateIndex(int index) {
-			super.updateIndex(index);
-			unbindContent();
-			setGraphic(index == -1 || isEmpty() ? null : updateContent());
-		}
+		protected void updateItem(TypeObject item, boolean empty) {
+			super.updateItem(item, empty);
 
-		private void unbindContent() {
+			// Unbind previous values
 			if (this.curCount != null)
 				this.count.valueProperty().unbindBidirectional(this.curCount);
 			if (this.curColor != null)
 				this.colorPicker.valueProperty().unbindBidirectional(this.curColor);
-		}
 
-		private Node updateContent() {
-			TypeObject obj = getItem();
-
-			this.typeName.setText("Type: " + obj.builder.getTypeName());
-
-			this.curCount = obj.count;
-			this.count.valueProperty().bindBidirectional(this.curCount);
-
-			if (obj.builder instanceof ColoredTypeBuilder) {
-				this.curColor = ((ColoredTypeBuilder) obj.builder).colorProperty();
-				this.colorPicker.valueProperty().bindBidirectional(this.curColor);
-				this.colorPicker.setDisable(false);
+			if (empty) {
+				setGraphic(null);
 			} else {
-				this.colorPicker.setDisable(true);
+				// Update content
+				this.typeName.setText("Type: " + item.builder.getTypeName());
+
+				this.curCount = item.count;
+				this.count.valueProperty().bindBidirectional(this.curCount);
+
+				if (item.builder instanceof ColoredTypeBuilder) {
+					this.curColor = ((ColoredTypeBuilder) item.builder).colorProperty();
+					this.colorPicker.valueProperty().bindBidirectional(this.curColor);
+					this.colorPicker.setDisable(false);
+				} else {
+					this.colorPicker.setDisable(true);
+				}
+
+				this.options.getChildren().setAll(item.builder.getNode());
+
+				setGraphic(this.pane);
 			}
-
-			this.options.getChildren().setAll(obj.builder.getNode());
-			return this.pane;
-		}
-
-		@Override
-		protected void updateItem(TypeObject item, boolean empty) {
-			super.updateItem(item, empty);
-			unbindContent();
-			setGraphic(getIndex() == -1 || empty ? null : updateContent());
 		}
 	}
 }
