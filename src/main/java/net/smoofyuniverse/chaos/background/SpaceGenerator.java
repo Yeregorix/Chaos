@@ -22,9 +22,9 @@
 
 package net.smoofyuniverse.chaos.background;
 
-import com.flowpowered.noise.NoiseQuality;
-import com.flowpowered.noise.module.source.Perlin;
 import javafx.scene.paint.Color;
+import org.spongepowered.noise.NoiseQuality;
+import org.spongepowered.noise.module.source.Perlin;
 
 import java.util.Random;
 import java.util.logging.Logger;

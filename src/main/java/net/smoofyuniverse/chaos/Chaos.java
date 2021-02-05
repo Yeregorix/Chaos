@@ -35,7 +35,7 @@ import net.smoofyuniverse.common.environment.DependencyManager;
 import net.smoofyuniverse.common.environment.source.GithubReleaseSource;
 
 public class Chaos extends Application {
-	public static final DependencyInfo FLOW_NOISE = new DependencyInfo("com.flowpowered:flow-noise:1.0.1-SNAPSHOT", "https://repo.spongepowered.org/maven/com/flowpowered/flow-noise/1.0.1-SNAPSHOT/flow-noise-1.0.1-20150609.030116-1.jar", 68228, "bfddff85287441521fb66ec22b59a463190966e1", "sha1");
+	public static final DependencyInfo FLOW_NOISE = new DependencyInfo("org.spongepowered:noise:2.0.0-SNAPSHOT", "https://repo.spongepowered.org/repository/sponge-legacy/org/spongepowered/noise/2.0.0-SNAPSHOT/noise-2.0.0-20190606.000239-1.jar", 55099, "7cdb48fa0c018537d272dc57da311138c5c1d6d3", "sha1");
 
 	private UserInterface ui;
 

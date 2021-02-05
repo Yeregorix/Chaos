@@ -33,13 +33,10 @@ targetCompatibility = 1.8
 repositories {
     mavenCentral()
     maven {
-        url = 'https://repo.spongepowered.org/maven'
+        url = 'https://repo.spongepowered.org/repository/maven-public/'
     }
     maven {
         url 'https://oss.sonatype.org/content/repositories/snapshots'
-    }
-    maven {
-        url 'https://jitpack.io'
     }
 }
 
@@ -54,7 +51,7 @@ configurations {
 
 dependencies {
     shade 'net.smoofyuniverse:appcommon:1.2.0-SNAPSHOT'
-    compile 'com.flowpowered:flow-noise:1.0.1-SNAPSHOT'
+    compile 'org.spongepowered:noise:2.0.0-SNAPSHOT'
 }
 
 jar {
