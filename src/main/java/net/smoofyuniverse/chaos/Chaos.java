@@ -27,13 +27,12 @@ import javafx.scene.input.KeyCode;
 import net.smoofyuniverse.chaos.impl.TypeABuilder;
 import net.smoofyuniverse.chaos.type.builder.TypeBuilder;
 import net.smoofyuniverse.chaos.ui.UserInterface;
-import net.smoofyuniverse.common.app.App;
 import net.smoofyuniverse.common.app.Application;
 import net.smoofyuniverse.common.app.Arguments;
+import net.smoofyuniverse.common.environment.ApplicationUpdater;
 import net.smoofyuniverse.common.environment.DependencyInfo;
+import net.smoofyuniverse.common.environment.DependencyManager;
 import net.smoofyuniverse.common.environment.source.GithubReleaseSource;
-
-import java.util.concurrent.Executors;
 
 public class Chaos extends Application {
 	public static final DependencyInfo FLOW_NOISE = new DependencyInfo("com.flowpowered:flow-noise:1.0.1-SNAPSHOT", "https://repo.spongepowered.org/maven/com/flowpowered/flow-noise/1.0.1-SNAPSHOT/flow-noise-1.0.1-20150609.030116-1.jar", 68228, "bfddff85287441521fb66ec22b59a463190966e1", "sha1");
@@ -46,20 +45,16 @@ public class Chaos extends Application {
 
 	@Override
 	public void init() {
-		requireUI();
-		initServices(Executors.newCachedThreadPool());
+		requireGUI();
+		initServices();
 
 		if (!this.devEnvironment) {
-			if (!updateDependencies(this.workingDir.resolve("libraries"), FLOW_NOISE)) {
-				shutdown();
-				return;
-			}
-			loadDependencies(FLOW_NOISE);
+			new DependencyManager(this, FLOW_NOISE).setup();
 		}
 
 		TypeBuilder.REGISTRY.put("A", TypeABuilder::new);
 
-		App.runLater(() -> {
+		runLater(() -> {
 			initStage(900, 700, "favicon.png");
 
 			Scene scene = new Scene(this.ui = new UserInterface());
@@ -73,7 +68,7 @@ public class Chaos extends Application {
 
 		new Thread(this.ui::run).start();
 
-		tryUpdateApplication(new GithubReleaseSource("Yeregorix", "Chaos", null, "Chaos"));
+		new ApplicationUpdater(this, new GithubReleaseSource("Yeregorix", "Chaos", null, "Chaos", getConnectionConfig())).run();
 	}
 
 	public static void main(String[] args) {

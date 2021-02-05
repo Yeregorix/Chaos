@@ -42,7 +42,7 @@ import net.smoofyuniverse.chaos.type.builder.ColoredTypeBuilder;
 import net.smoofyuniverse.chaos.type.builder.TypeBuilder;
 import net.smoofyuniverse.chaos.type.gen.TypeGenerator;
 import net.smoofyuniverse.chaos.universe.Universe;
-import net.smoofyuniverse.common.app.App;
+import net.smoofyuniverse.common.app.Application;
 import net.smoofyuniverse.common.fx.field.IntegerField;
 import net.smoofyuniverse.common.util.GridUtil;
 import net.smoofyuniverse.logger.core.Logger;
@@ -61,7 +61,7 @@ import java.util.function.Supplier;
 
 public class GenerationPanel extends GridPane {
 	public static final int CURRENT_VERSION = 1, MINIMUM_VERSION = 1;
-	private static final Logger logger = App.getLogger("GenerationPanel");
+	private static final Logger logger = Logger.get("GenerationPanel");
 
 	private final ListView<TypeObject> types = new ListView<>();
 	private final TextField seed1 = new TextField(), seed2 = new TextField();
@@ -165,9 +165,9 @@ public class GenerationPanel extends GridPane {
 		FileChooser chooser = new FileChooser();
 		chooser.getExtensionFilters().add(new ExtensionFilter("Chaos Options", "*.cho"));
 
-		// TODO improve because it's ugly
+		// TODO async IO
 		open.setOnAction(e -> {
-			File f = chooser.showOpenDialog(App.get().getStage().orElse(null));
+			File f = chooser.showOpenDialog(Application.get().getStage().orElse(null));
 			if (f != null) {
 				Path p = f.toPath();
 				try {
@@ -179,7 +179,7 @@ public class GenerationPanel extends GridPane {
 		});
 
 		save.setOnAction(e -> {
-			File f = chooser.showSaveDialog(App.get().getStage().orElse(null));
+			File f = chooser.showSaveDialog(Application.get().getStage().orElse(null));
 			if (f != null) {
 				Path p = f.toPath();
 				try {

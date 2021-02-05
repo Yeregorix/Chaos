@@ -42,7 +42,7 @@ import net.smoofyuniverse.chaos.background.SpaceGenerator;
 import net.smoofyuniverse.chaos.universe.Particle;
 import net.smoofyuniverse.chaos.universe.Snapshot;
 import net.smoofyuniverse.chaos.universe.Universe;
-import net.smoofyuniverse.common.app.App;
+import net.smoofyuniverse.common.app.Application;
 import net.smoofyuniverse.common.app.State;
 import net.smoofyuniverse.logger.core.Logger;
 
@@ -50,7 +50,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class UserInterface extends StackPane {
-	private static final Logger logger = App.getLogger("UserInterface");
+	private static final Logger logger = Logger.get("UserInterface");
 
 	private final GenerationPanel generationPanel = new GenerationPanel();
 	private final Stage stage2 = new Stage();
@@ -71,8 +71,8 @@ public class UserInterface extends StackPane {
 
 	public UserInterface() {
 		this.stage2.setScene(new Scene(this.generationPanel));
-		this.stage2.setTitle(App.get().getTitle());
-		this.stage2.getIcons().addAll(App.get().getStage().get().getIcons());
+		this.stage2.setTitle(Application.get().getTitle());
+		this.stage2.getIcons().addAll(Application.get().getStage().get().getIcons());
 		this.stage2.setWidth(750);
 		this.stage2.setHeight(900);
 
@@ -137,7 +137,7 @@ public class UserInterface extends StackPane {
 				this.generate = true;
 				break;
 			case 'O':
-				App.get().getStage().get().setFullScreen(false);
+				Application.get().getStage().get().setFullScreen(false);
 				this.stage2.show();
 				this.stage2.requestFocus();
 				break;
@@ -183,7 +183,7 @@ public class UserInterface extends StackPane {
 	}
 
 	public void run() {
-		while (App.get().getState() != State.SHUTDOWN) {
+		while (Application.get().getState() != State.SHUTDOWN) {
 			long t = System.currentTimeMillis();
 
 			if (this.generate) {

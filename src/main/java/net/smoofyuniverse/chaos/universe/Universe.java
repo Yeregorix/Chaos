@@ -24,6 +24,7 @@ package net.smoofyuniverse.chaos.universe;
 
 import javafx.scene.canvas.GraphicsContext;
 import net.smoofyuniverse.chaos.type.Type;
+import net.smoofyuniverse.logger.core.Logger;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,6 +33,8 @@ import java.util.concurrent.Executor;
 import java.util.function.IntConsumer;
 
 public final class Universe {
+	private static final Logger logger = Logger.get("Universe");
+
 	private final List<UParticle> particles = new ArrayList<>();
 	private final Executor executor;
 	private final int chunks;
@@ -230,7 +233,7 @@ public final class Universe {
 		try {
 			latch.await();
 		} catch (InterruptedException e) {
-			throw new RuntimeException(e);
+			logger.error(e);
 		}
 	}
 

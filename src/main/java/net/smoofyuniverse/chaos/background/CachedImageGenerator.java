@@ -28,9 +28,12 @@ import javafx.scene.image.ImageView;
 import javafx.scene.image.PixelWriter;
 import javafx.scene.image.WritableImage;
 import javafx.scene.paint.Color;
-import net.smoofyuniverse.common.app.App;
+import net.smoofyuniverse.common.app.Application;
+import net.smoofyuniverse.logger.core.Logger;
 
 public abstract class CachedImageGenerator implements BackgroundGenerator {
+	private static final Logger logger = Logger.get("CachedImageGenerator");
+
 	private final ImageView imageView = new ImageView();
 
 	private Image cachedImage;
@@ -56,11 +59,11 @@ public abstract class CachedImageGenerator implements BackgroundGenerator {
 
 			if (!this.updating) {
 				this.updating = true;
-				App.get().getExecutor().execute(() -> {
+				Application.get().getExecutor().execute(() -> {
 					try {
 						update();
 					} catch (Exception e) {
-						e.printStackTrace();
+						logger.error("Failed to update image", e);
 					}
 				});
 			}
