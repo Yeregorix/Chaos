@@ -60,8 +60,8 @@ public class UserInterface extends StackPane {
 			"\n+: Increase minimum tick duration.\n-: Decrease minimum tick duration.\n1 to 9: Force n ticks to process.\n0: Clear remaining forced ticks.\nF11: Fullscreen.");
 	private final Label details = new Label();
 
-	private final ExecutorService executor = Executors.newFixedThreadPool(4);
-	private final Universe universe = new Universe(this.executor, 12);
+	private final ExecutorService executor;
+	private final Universe universe;
 	private final BackgroundGenerator backgroundGen = new SpaceGenerator(Color.BLACK, Color.BLUE);
 
 	private final BooleanProperty showHelp = new SimpleBooleanProperty(true), showDetails = new SimpleBooleanProperty(false);
@@ -70,6 +70,10 @@ public class UserInterface extends StackPane {
 	private long age, tau = 25;
 
 	public UserInterface() {
+		int threads = Runtime.getRuntime().availableProcessors();
+		this.executor = Executors.newFixedThreadPool(threads);
+		this.universe = new Universe(this.executor, threads * 4);
+
 		this.stage2.setScene(new Scene(this.generationPanel));
 		this.stage2.setTitle(Application.get().getTitle());
 		this.stage2.getIcons().addAll(Application.get().getStage().get().getIcons());
