@@ -369,7 +369,7 @@ public class GenerationPanel extends GridPane {
 			if (this.curColor != null)
 				this.colorPicker.valueProperty().unbindBidirectional(this.curColor);
 
-			if (empty) {
+			if (empty || item == null) {
 				setGraphic(null);
 			} else {
 				// Update content
