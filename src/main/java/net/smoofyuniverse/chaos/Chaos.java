@@ -54,9 +54,9 @@ public class Chaos extends Application {
 
 			stage.setScene(scene);
 			stage.show();
-		});
 
-		new Thread(this.ui::run).start();
+			new Thread(this.ui::run).start();
+		});
 
 		getManager().runUpdater(new GitHubReleaseSource("Yeregorix", "Chaos", null, "Chaos", getManager().getConnectionConfig()));
 	}
