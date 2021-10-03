@@ -85,7 +85,7 @@ public class TypeABuilder implements ColoredTypeBuilder<TypeA> {
 		this.pane.setHgap(5);
 		this.pane.setVgap(5);
 
-		this.pane.getColumnConstraints().addAll(GridUtil.createColumn(15), GridUtil.createColumn(35), GridUtil.createColumn(15), GridUtil.createColumn(35));
+		this.pane.getColumnConstraints().addAll(GridUtil.column(15), GridUtil.column(35), GridUtil.column(15), GridUtil.column(35));
 	}
 
 	@Override

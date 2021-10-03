@@ -210,8 +210,8 @@ public class GenerationPanel extends GridPane {
 		setVgap(5);
 		setHgap(5);
 
-		getColumnConstraints().addAll(GridUtil.createColumn(17), GridUtil.createColumn(17), GridUtil.createColumn(32), GridUtil.createColumn(17), GridUtil.createColumn(17));
-		getRowConstraints().addAll(GridUtil.createRow(Priority.ALWAYS), GridUtil.createRow(), GridUtil.createRow(), GridUtil.createRow(), GridUtil.createRow());
+		getColumnConstraints().addAll(GridUtil.column(17), GridUtil.column(17), GridUtil.column(32), GridUtil.column(17), GridUtil.column(17));
+		getRowConstraints().addAll(GridUtil.row(Priority.ALWAYS), GridUtil.row(), GridUtil.row(), GridUtil.row(), GridUtil.row());
 
 		// Default config
 		int index = this.optionsRandom.nextInt(TypeAGenerators.RANDOMS.size());
@@ -356,8 +356,8 @@ public class GenerationPanel extends GridPane {
 			this.pane.setVgap(5);
 			this.pane.setHgap(5);
 
-			this.pane.getColumnConstraints().addAll(GridUtil.createColumn(15), GridUtil.createColumn(35), GridUtil.createColumn(35), GridUtil.createColumn(15));
-			this.pane.getRowConstraints().addAll(GridUtil.createRow(), GridUtil.createRow(Priority.ALWAYS));
+			this.pane.getColumnConstraints().addAll(GridUtil.column(15), GridUtil.column(35), GridUtil.column(35), GridUtil.column(15));
+			this.pane.getRowConstraints().addAll(GridUtil.row(), GridUtil.row(Priority.ALWAYS));
 		}
 
 		@Override
