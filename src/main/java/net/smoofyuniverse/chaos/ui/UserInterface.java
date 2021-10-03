@@ -43,14 +43,16 @@ import net.smoofyuniverse.chaos.universe.Particle;
 import net.smoofyuniverse.chaos.universe.Snapshot;
 import net.smoofyuniverse.chaos.universe.Universe;
 import net.smoofyuniverse.common.app.Application;
+import net.smoofyuniverse.common.app.ApplicationManager;
 import net.smoofyuniverse.common.app.State;
-import net.smoofyuniverse.logger.core.Logger;
+import net.smoofyuniverse.common.logger.ApplicationLogger;
+import org.slf4j.Logger;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class UserInterface extends StackPane {
-	private static final Logger logger = Logger.get("UserInterface");
+	private static final Logger logger = ApplicationLogger.get(UserInterface.class);
 
 	private final GenerationPanel generationPanel = new GenerationPanel();
 	private final Stage stage2 = new Stage();
@@ -75,7 +77,7 @@ public class UserInterface extends StackPane {
 		this.universe = new Universe(this.executor, threads * 4);
 
 		this.stage2.setScene(new Scene(this.generationPanel));
-		this.stage2.setTitle(Application.get().getTitle());
+		this.stage2.setTitle(ApplicationManager.get().getTitle());
 		this.stage2.getIcons().addAll(Application.get().getStage().get().getIcons());
 		this.stage2.setWidth(750);
 		this.stage2.setHeight(900);
@@ -187,7 +189,7 @@ public class UserInterface extends StackPane {
 	}
 
 	public void run() {
-		while (Application.get().getState() != State.SHUTDOWN) {
+		while (ApplicationManager.get().getState() != State.SHUTDOWN) {
 			long t = System.currentTimeMillis();
 
 			if (this.generate) {
@@ -238,7 +240,7 @@ public class UserInterface extends StackPane {
 			try {
 				Thread.sleep(Math.max(1, this.tau - t));
 			} catch (InterruptedException e) {
-				logger.error(e);
+				logger.error("Interruption", e);
 				return;
 			}
 		}

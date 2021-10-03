@@ -44,8 +44,9 @@ import net.smoofyuniverse.chaos.type.gen.TypeGenerator;
 import net.smoofyuniverse.chaos.universe.Universe;
 import net.smoofyuniverse.common.app.Application;
 import net.smoofyuniverse.common.fx.field.IntegerField;
+import net.smoofyuniverse.common.logger.ApplicationLogger;
 import net.smoofyuniverse.common.util.GridUtil;
-import net.smoofyuniverse.logger.core.Logger;
+import org.slf4j.Logger;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -61,7 +62,7 @@ import java.util.function.Supplier;
 
 public class GenerationPanel extends GridPane {
 	public static final int CURRENT_VERSION = 1, MINIMUM_VERSION = 1;
-	private static final Logger logger = Logger.get("GenerationPanel");
+	private static final Logger logger = ApplicationLogger.get(GenerationPanel.class);
 
 	private final ListView<TypeObject> types = new ListView<>();
 	private final TextField seed1 = new TextField(), seed2 = new TextField();
@@ -173,7 +174,7 @@ public class GenerationPanel extends GridPane {
 				try {
 					read(p);
 				} catch (IOException ex) {
-					logger.error("Failed to read options from " + p.getFileName(), ex);
+					logger.error("Failed to read options from {}", p.getFileName(), ex);
 				}
 			}
 		});
@@ -185,7 +186,7 @@ public class GenerationPanel extends GridPane {
 				try {
 					write(p);
 				} catch (IOException ex) {
-					logger.error("Failed to write options to " + p.getFileName(), ex);
+					logger.error("Failed to write options to {}", p.getFileName(), ex);
 				}
 			}
 		});
@@ -276,7 +277,7 @@ public class GenerationPanel extends GridPane {
 			String typeName = in.readUTF();
 			Supplier<TypeBuilder<?>> supplier = TypeBuilder.REGISTRY.get(typeName);
 			if (supplier == null) {
-				logger.warn("Skipping unknown type name " + typeName);
+				logger.warn("Skipping unknown type name {}", typeName);
 				continue;
 			}
 
