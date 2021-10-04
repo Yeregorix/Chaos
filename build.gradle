@@ -22,7 +22,7 @@
 
 plugins {
     id 'java-library'
-    id 'net.smoofyuniverse.appcommon-gradle' version '1.0.0'
+    id 'net.smoofyuniverse.appcommon-gradle' version '1.0.2'
 }
 
 group 'net.smoofyuniverse'
