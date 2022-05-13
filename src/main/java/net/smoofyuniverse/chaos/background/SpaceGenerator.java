@@ -49,7 +49,7 @@ public class SpaceGenerator extends CachedImageGenerator {
 
 	@Override
 	protected Color generate(int x, int y) {
-		double v = this.perlin.getValue(x, y, 0);
+		double v = this.perlin.get(x, y, 0);
 		if (this.random.nextFloat() * 1500 < v)
 			return Color.gray(this.random.nextDouble());
 		return this.color1.interpolate(this.color2, (v - 1.1) * 0.5);
